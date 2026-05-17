@@ -20,6 +20,8 @@ interface DragState {
   mode: DragMode
   startX: number
   startY: number
+  startScrollX: number
+  startScrollY: number
   startSticker: StickerState
   centerX?: number
   centerY?: number
@@ -31,6 +33,7 @@ const storageKey = 'authorized-ai-cophoto-stickers-v2'
 function getDefaultStickers(): StickerState[] {
   const viewportWidth = window.innerWidth || 1440
   const viewportHeight = window.innerHeight || 820
+  const scrollY = window.scrollY || 0
 
   return [
     {
@@ -38,7 +41,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/son-heungmin-cutout.png',
       alt: '孙兴慜贴纸',
       x: viewportWidth >= 900 ? -72 : -140,
-      y: viewportWidth >= 900 ? Math.max(420, viewportHeight - 390) : Math.max(330, viewportHeight - 360),
+      y: scrollY + (viewportWidth >= 900 ? Math.max(420, viewportHeight - 390) : Math.max(330, viewportHeight - 360)),
       width: viewportWidth >= 900 ? 385 : 240,
       rotation: 0,
       zIndex: 3,
@@ -48,7 +51,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/mr-bean.png',
       alt: '憨豆贴纸',
       x: viewportWidth >= 900 ? -146 : -80,
-      y: viewportWidth >= 900 ? -122 : -72,
+      y: scrollY + (viewportWidth >= 900 ? -122 : -72),
       width: viewportWidth >= 900 ? 455 : 285,
       rotation: -105,
       zIndex: 5,
@@ -58,7 +61,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/zhang-wonyoung-cutout.png',
       alt: '张元英贴纸',
       x: viewportWidth >= 900 ? viewportWidth - 330 : viewportWidth - 100,
-      y: viewportWidth >= 900 ? 254 : Math.max(250, viewportHeight - 360),
+      y: scrollY + (viewportWidth >= 900 ? 254 : Math.max(250, viewportHeight - 360)),
       width: viewportWidth >= 900 ? 410 : 240,
       rotation: 0,
       zIndex: 3,
@@ -167,9 +170,15 @@ export function EditableStickerLayer() {
 
           const deltaX = event.clientX - currentDrag.startX
           const deltaY = event.clientY - currentDrag.startY
+          const scrollDeltaX = window.scrollX - currentDrag.startScrollX
+          const scrollDeltaY = window.scrollY - currentDrag.startScrollY
 
           if (currentDrag.mode === 'move') {
-            return { ...sticker, x: currentDrag.startSticker.x + deltaX, y: currentDrag.startSticker.y + deltaY }
+            return {
+              ...sticker,
+              x: currentDrag.startSticker.x + deltaX + scrollDeltaX,
+              y: currentDrag.startSticker.y + deltaY + scrollDeltaY,
+            }
           }
 
           if (currentDrag.mode === 'resize') {
@@ -228,6 +237,8 @@ export function EditableStickerLayer() {
       mode,
       startX: event.clientX,
       startY: event.clientY,
+      startScrollX: window.scrollX,
+      startScrollY: window.scrollY,
       startSticker: sticker,
       centerX,
       centerY,
