@@ -31,6 +31,8 @@ interface DragState {
 }
 
 const storageKey = 'authorized-ai-cophoto-editor-elements-v2'
+const remoteStateEndpoint = '/api/editor-state'
+const remoteAssetEndpoint = '/api/editor-assets'
 const maxStoredImageSide = 1200
 const maxStoredImageBytes = 1_400_000
 const transparentImageSides = [1200, 900, 700, 520, 380]
@@ -52,6 +54,52 @@ function saveElements(elements: CanvasElement[]) {
   }
 }
 
+function isCanvasElementArray(value: unknown): value is CanvasElement[] {
+  return (
+    Array.isArray(value) &&
+    value.every((element) => {
+      if (!element || typeof element !== 'object') {
+        return false
+      }
+      const item = element as Partial<CanvasElement>
+      return (
+        typeof item.id === 'string' &&
+        (item.type === 'text' || item.type === 'image') &&
+        typeof item.content === 'string' &&
+        typeof item.x === 'number' &&
+        typeof item.y === 'number' &&
+        typeof item.width === 'number' &&
+        typeof item.rotation === 'number' &&
+        typeof item.fontSize === 'number' &&
+        typeof item.zIndex === 'number'
+      )
+    })
+  )
+}
+
+async function fetchRemoteElements() {
+  const response = await fetch(remoteStateEndpoint, { headers: { Accept: 'application/json' } })
+  if (!response.ok) {
+    throw new Error(`Remote editor state returned ${response.status}`)
+  }
+  const data = (await response.json()) as unknown
+  if (!isCanvasElementArray(data)) {
+    throw new Error('Remote editor state has an invalid shape')
+  }
+  return data
+}
+
+async function saveRemoteElements(elements: CanvasElement[]) {
+  const response = await fetch(remoteStateEndpoint, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(elements),
+  })
+  if (!response.ok) {
+    throw new Error(`Remote editor state save returned ${response.status}`)
+  }
+}
+
 function readFileAsDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
@@ -59,6 +107,36 @@ function readFileAsDataUrl(file: File) {
     reader.onerror = () => reject(reader.error)
     reader.readAsDataURL(file)
   })
+}
+
+function dataUrlToBlob(dataUrl: string) {
+  const [header, base64Data] = dataUrl.split(',')
+  const contentType = header.match(/data:(.*?);base64/)?.[1] || 'application/octet-stream'
+  const binary = window.atob(base64Data)
+  const bytes = new Uint8Array(binary.length)
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index)
+  }
+  return new Blob([bytes], { type: contentType })
+}
+
+async function uploadEditorAsset(dataUrl: string, fileName: string) {
+  const formData = new FormData()
+  formData.append('file', dataUrlToBlob(dataUrl), fileName)
+
+  const response = await fetch(remoteAssetEndpoint, {
+    method: 'POST',
+    body: formData,
+  })
+  if (!response.ok) {
+    throw new Error(`Editor asset upload returned ${response.status}`)
+  }
+
+  const payload = (await response.json()) as { url?: string }
+  if (!payload.url) {
+    throw new Error('Editor asset upload did not return a URL')
+  }
+  return payload.url
 }
 
 function loadImage(src: string) {
@@ -140,6 +218,8 @@ export function EditorCanvasLayer() {
   const [elements, setElements] = useState<CanvasElement[]>(() => loadElements())
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragState, setDragState] = useState<DragState | null>(null)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [remoteHydrated, setRemoteHydrated] = useState(false)
   const elementRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const undoStackRef = useRef<CanvasElement[][]>([])
@@ -160,8 +240,45 @@ export function EditorCanvasLayer() {
   }
 
   useEffect(() => {
+    let cancelled = false
+
+    fetchRemoteElements()
+      .then((remoteElements) => {
+        if (cancelled) {
+          return
+        }
+
+        if (remoteElements.length > 0) {
+          setElements(remoteElements)
+          saveElements(remoteElements)
+        }
+        setRemoteHydrated(true)
+      })
+      .catch((error) => {
+        console.warn('Remote editor state is unavailable; falling back to local cache.', error)
+        setRemoteHydrated(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
     saveElements(elements)
-  }, [elements])
+
+    if (!admin.isAuthenticated || !remoteHydrated) {
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      saveRemoteElements(elements).catch((error) => {
+        console.warn('Unable to save editor state to Cloudflare.', error)
+      })
+    }, 650)
+
+    return () => window.clearTimeout(timer)
+  }, [admin.isAuthenticated, elements, remoteHydrated])
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -302,7 +419,17 @@ export function EditorCanvasLayer() {
 
   async function addImage(file: File) {
     try {
-      const content = await prepareImageForEditor(file)
+      setIsUploadingImage(true)
+      const preparedDataUrl = await prepareImageForEditor(file)
+      let content = preparedDataUrl
+
+      try {
+        content = await uploadEditorAsset(preparedDataUrl, file.name)
+      } catch (uploadError) {
+        console.warn('Cloud upload failed; keeping this image in local fallback storage.', uploadError)
+        window.alert('图片暂时没有上传到云端，只保存在本机。给别人看之前请确认网络和 Cloudflare 部署正常。')
+      }
+
       const next: CanvasElement = {
         id: `image-${Date.now()}`,
         type: 'image',
@@ -320,6 +447,8 @@ export function EditorCanvasLayer() {
     } catch (error) {
       console.error('Failed to add image', error)
       window.alert('图片添加失败，请换一张尺寸更小的图片再试。')
+    } finally {
+      setIsUploadingImage(false)
     }
   }
 
@@ -354,8 +483,8 @@ export function EditorCanvasLayer() {
           <button type="button" disabled={!admin.editMode} onClick={addText}>
             添加文字
           </button>
-          <button type="button" disabled={!admin.editMode} onClick={() => fileInputRef.current?.click()}>
-            添加图片
+          <button type="button" disabled={!admin.editMode || isUploadingImage} onClick={() => fileInputRef.current?.click()}>
+            {isUploadingImage ? '上传中' : '添加图片'}
           </button>
           <button type="button" onClick={admin.logout}>
             退出

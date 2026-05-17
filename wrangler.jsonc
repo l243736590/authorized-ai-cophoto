@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "authorized-ai-cophoto",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-05-17",
+  "kv_namespaces": [
+    {
+      "binding": "EDITOR_ASSETS_KV",
+      "id": "e2f9fe2201bc4746ab050ed5d5c89807"
+    }
+  ]
+}
