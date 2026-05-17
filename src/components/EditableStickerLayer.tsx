@@ -26,7 +26,7 @@ interface DragState {
   startAngle?: number
 }
 
-const storageKey = 'authorized-ai-cophoto-stickers-v3'
+const storageKey = 'authorized-ai-cophoto-stickers-v4'
 
 function getDefaultStickers(): StickerState[] {
   const viewportWidth = window.innerWidth || 1440
