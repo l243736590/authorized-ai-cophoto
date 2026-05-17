@@ -54,7 +54,22 @@ export function EditorCanvasLayer() {
   const [dragState, setDragState] = useState<DragState | null>(null)
   const elementRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const undoStackRef = useRef<CanvasElement[][]>([])
   const activeElement = useMemo(() => elements.find((element) => element.id === activeId && !element.deleted), [activeId, elements])
+
+  function pushUndoSnapshot(snapshot = elements) {
+    undoStackRef.current = [...undoStackRef.current.slice(-39), snapshot.map((element) => ({ ...element }))]
+  }
+
+  function undoLastChange() {
+    const previous = undoStackRef.current.pop()
+    if (!previous) {
+      return
+    }
+    setElements(previous)
+    setActiveId(null)
+    setDragState(null)
+  }
 
   useEffect(() => {
     saveElements(elements)
@@ -66,12 +81,19 @@ export function EditorCanvasLayer() {
         return
       }
 
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault()
+        undoLastChange()
+        return
+      }
+
       if (event.key === 'Escape') {
         setActiveId(null)
         setDragState(null)
       }
 
       if ((event.key === 'Delete' || event.key === 'Backspace') && activeId) {
+        pushUndoSnapshot()
         setElements((current) => current.map((element) => (element.id === activeId ? { ...element, deleted: true } : element)))
         setActiveId(null)
       }
@@ -79,7 +101,7 @@ export function EditorCanvasLayer() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [activeId, admin.editMode])
+  }, [activeId, admin.editMode, elements])
 
   useEffect(() => {
     if (!dragState) {
@@ -139,8 +161,14 @@ export function EditorCanvasLayer() {
       return
     }
 
+    const target = event.target as HTMLElement
+    if (target.closest('button,.sticker-handle,.editor-mini-toolbar')) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
+    pushUndoSnapshot()
     setActiveId(element.id)
 
     const rect = elementRefs.current[element.id]?.getBoundingClientRect()
@@ -171,6 +199,7 @@ export function EditorCanvasLayer() {
       fontSize: 28,
       zIndex: 20 + elements.length,
     }
+    pushUndoSnapshot()
     setElements((current) => [...current, next])
     setActiveId(next.id)
   }
@@ -189,6 +218,7 @@ export function EditorCanvasLayer() {
         fontSize: 16,
         zIndex: 30 + elements.length,
       }
+      pushUndoSnapshot()
       setElements((current) => [...current, next])
       setActiveId(next.id)
     }
@@ -196,6 +226,7 @@ export function EditorCanvasLayer() {
   }
 
   function updateElement(id: string, patch: Partial<CanvasElement>) {
+    pushUndoSnapshot()
     setElements((current) => current.map((element) => (element.id === id ? { ...element, ...patch } : element)))
   }
 
@@ -203,7 +234,6 @@ export function EditorCanvasLayer() {
     if (!activeElement) {
       return
     }
-
     updateElement(activeElement.id, { zIndex: Math.max(1, activeElement.zIndex + delta) })
   }
 
@@ -211,7 +241,6 @@ export function EditorCanvasLayer() {
     if (!activeElement) {
       return
     }
-
     updateElement(activeElement.id, { deleted: true })
     setActiveId(null)
   }
@@ -291,7 +320,11 @@ export function EditorCanvasLayer() {
                 contentEditable={isActive}
                 suppressContentEditableWarning
                 style={{ fontSize: element.fontSize }}
-                onBlur={(event) => updateElement(element.id, { content: event.currentTarget.textContent || '' })}
+                onBlur={(event) => {
+                  if (event.currentTarget.textContent !== element.content) {
+                    updateElement(element.id, { content: event.currentTarget.textContent || '' })
+                  }
+                }}
               >
                 {element.content}
               </div>
@@ -311,10 +344,10 @@ export function EditorCanvasLayer() {
                     </>
                   )}
                   <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustLayer(1)}>
-                    上移图层
+                    图层上
                   </button>
                   <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustLayer(-1)}>
-                    下移图层
+                    图层下
                   </button>
                   <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={deleteActive}>
                     删除

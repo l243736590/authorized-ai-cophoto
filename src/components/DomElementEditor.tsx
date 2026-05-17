@@ -1,20 +1,108 @@
 /* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAdmin } from '../context/AdminContext'
 
 const selectableSelector = 'h1,h2,h3,p,span,strong,small,dt,dd,legend,label,img'
-const ignoredSelector = '.admin-editbar,.editor-mini-toolbar,.sticker-control,.sticker-handle,.language-switch,.brand-stage,.canvas-editable'
+const ignoredSelector =
+  '.admin-editbar,.editor-mini-toolbar,.dom-editor-toolbar,.sticker-control,.sticker-handle,.language-switch,.brand-stage,.canvas-editable,.editable-sticker'
+
+interface DomSnapshot {
+  element: HTMLElement
+  cssText: string
+  textContent: string | null
+  contentEditable: string | null
+  className: string
+}
+
+interface DragState {
+  element: HTMLElement
+  startX: number
+  startY: number
+  startLeft: number
+  startTop: number
+}
+
+function getNumericStyleValue(element: HTMLElement, property: 'left' | 'top') {
+  const inlineValue = Number.parseFloat(element.style[property] || '0')
+  return Number.isFinite(inlineValue) ? inlineValue : 0
+}
+
+function ensureMoveable(element: HTMLElement) {
+  const style = window.getComputedStyle(element)
+  if (style.position === 'static') {
+    element.style.position = 'relative'
+  }
+}
 
 export function DomElementEditor() {
   const admin = useAdmin()
   const [selected, setSelected] = useState<HTMLElement | null>(null)
   const [position, setPosition] = useState({ left: 0, top: 0 })
+  const [dragState, setDragState] = useState<DragState | null>(null)
+  const undoStackRef = useRef<DomSnapshot[]>([])
+  const selectedRef = useRef<HTMLElement | null>(null)
+
+  function updateToolbarPosition(element: HTMLElement) {
+    const rect = element.getBoundingClientRect()
+    setPosition({ left: Math.min(rect.left, window.innerWidth - 360), top: Math.max(12, rect.top - 54) })
+  }
+
+  useEffect(() => {
+    selectedRef.current = selected
+  }, [selected])
+
+  function pushDomSnapshot(element = selectedRef.current) {
+    if (!element) {
+      return
+    }
+
+    undoStackRef.current = [
+      ...undoStackRef.current.slice(-39),
+      {
+        element,
+        cssText: element.style.cssText,
+        textContent: element.tagName.toLowerCase() === 'img' ? null : element.textContent,
+        contentEditable: element.getAttribute('contenteditable'),
+        className: element.className,
+      },
+    ]
+  }
+
+  function undoLastChange() {
+    const previous = undoStackRef.current.pop()
+    if (!previous) {
+      return
+    }
+
+    previous.element.style.cssText = previous.cssText
+    previous.element.className = previous.className
+    if (previous.textContent !== null) {
+      previous.element.textContent = previous.textContent
+    }
+
+    if (previous.contentEditable === null) {
+      previous.element.removeAttribute('contenteditable')
+    } else {
+      previous.element.setAttribute('contenteditable', previous.contentEditable)
+    }
+
+    previous.element.classList.add('dom-editable-selected')
+    setSelected(previous.element)
+    updateToolbarPosition(previous.element)
+    setDragState(null)
+  }
+
+  function clearSelection() {
+    selectedRef.current?.classList.remove('dom-editable-selected')
+    selectedRef.current?.removeAttribute('contenteditable')
+    selectedRef.current = null
+    setSelected(null)
+    setDragState(null)
+  }
 
   useEffect(() => {
     if (!admin.editMode) {
-      selected?.classList.remove('dom-editable-selected')
-      selected?.removeAttribute('contenteditable')
-      setSelected(null)
+      clearSelection()
       return
     }
 
@@ -27,8 +115,8 @@ export function DomElementEditor() {
 
       event.preventDefault()
       event.stopPropagation()
-      selected?.classList.remove('dom-editable-selected')
-      selected?.removeAttribute('contenteditable')
+      selectedRef.current?.classList.remove('dom-editable-selected')
+      selectedRef.current?.removeAttribute('contenteditable')
       element.classList.add('dom-editable-selected')
 
       if (element.tagName.toLowerCase() !== 'img') {
@@ -36,26 +124,77 @@ export function DomElementEditor() {
         element.focus()
       }
 
-      const rect = element.getBoundingClientRect()
-      setPosition({ left: Math.min(rect.left, window.innerWidth - 320), top: Math.max(12, rect.top - 52) })
+      updateToolbarPosition(element)
+      selectedRef.current = element
       setSelected(element)
     }
 
+    function handlePointerDown(event: PointerEvent) {
+      const element = selectedRef.current
+      const target = event.target as HTMLElement | null
+      if (!element || event.button !== 0 || !target || target.closest(ignoredSelector) || !element.contains(target)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+      pushDomSnapshot(element)
+      ensureMoveable(element)
+      setDragState({
+        element,
+        startX: event.clientX,
+        startY: event.clientY,
+        startLeft: getNumericStyleValue(element, 'left'),
+        startTop: getNumericStyleValue(element, 'top'),
+      })
+    }
+
     function handleKeyDown(event: KeyboardEvent) {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault()
+        undoLastChange()
+        return
+      }
+
       if (event.key === 'Escape') {
-        selected?.classList.remove('dom-editable-selected')
-        selected?.removeAttribute('contenteditable')
-        setSelected(null)
+        clearSelection()
       }
     }
 
     document.addEventListener('dblclick', handleDoubleClick, true)
+    document.addEventListener('pointerdown', handlePointerDown, true)
     window.addEventListener('keydown', handleKeyDown)
     return () => {
       document.removeEventListener('dblclick', handleDoubleClick, true)
+      document.removeEventListener('pointerdown', handlePointerDown, true)
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [admin.editMode, selected])
+  }, [admin.editMode])
+
+  useEffect(() => {
+    if (!dragState) {
+      return
+    }
+
+    const currentDrag = dragState
+
+    function handlePointerMove(event: PointerEvent) {
+      currentDrag.element.style.left = `${currentDrag.startLeft + event.clientX - currentDrag.startX}px`
+      currentDrag.element.style.top = `${currentDrag.startTop + event.clientY - currentDrag.startY}px`
+      updateToolbarPosition(currentDrag.element)
+    }
+
+    function handlePointerUp() {
+      setDragState(null)
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp, { once: true })
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  }, [dragState])
 
   if (!admin.editMode || !selected) {
     return null
@@ -63,38 +202,36 @@ export function DomElementEditor() {
 
   const isImage = selected.tagName.toLowerCase() === 'img'
 
-  function ensureLayerable() {
-    if (!selected) {
-      return
-    }
-    const style = window.getComputedStyle(selected)
-    if (style.position === 'static') {
-      selected.style.position = 'relative'
-    }
-  }
-
   function adjustFontSize(delta: number) {
     if (!selected || isImage) {
       return
     }
+
+    pushDomSnapshot(selected)
     const current = Number.parseFloat(window.getComputedStyle(selected).fontSize) || 16
     selected.style.fontSize = `${Math.max(10, current + delta)}px`
+    updateToolbarPosition(selected)
   }
 
   function adjustImageWidth(delta: number) {
     if (!selected || !isImage) {
       return
     }
+
+    pushDomSnapshot(selected)
     const rect = selected.getBoundingClientRect()
     selected.style.width = `${Math.max(60, rect.width + delta)}px`
     selected.style.height = 'auto'
+    updateToolbarPosition(selected)
   }
 
   function adjustLayer(delta: number) {
     if (!selected) {
       return
     }
-    ensureLayerable()
+
+    pushDomSnapshot(selected)
+    ensureMoveable(selected)
     const current = Number.parseInt(window.getComputedStyle(selected).zIndex || '0', 10) || 0
     selected.style.zIndex = String(current + delta)
   }
@@ -103,10 +240,10 @@ export function DomElementEditor() {
     if (!selected) {
       return
     }
+
+    pushDomSnapshot(selected)
     selected.style.display = 'none'
-    selected.classList.remove('dom-editable-selected')
-    selected.removeAttribute('contenteditable')
-    setSelected(null)
+    clearSelection()
   }
 
   return (

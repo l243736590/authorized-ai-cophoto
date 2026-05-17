@@ -98,10 +98,25 @@ export function EditableStickerLayer() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragState, setDragState] = useState<DragState | null>(null)
   const stickerRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const undoStackRef = useRef<StickerState[][]>([])
   const activeSticker = useMemo(
     () => stickers.find((sticker) => sticker.id === activeId && !sticker.deleted),
     [activeId, stickers],
   )
+
+  function pushUndoSnapshot(snapshot = stickers) {
+    undoStackRef.current = [...undoStackRef.current.slice(-39), snapshot.map((sticker) => ({ ...sticker }))]
+  }
+
+  function undoLastChange() {
+    const previous = undoStackRef.current.pop()
+    if (!previous) {
+      return
+    }
+    setStickers(previous)
+    setActiveId(null)
+    setDragState(null)
+  }
 
   useEffect(() => {
     saveStickers(stickers)
@@ -113,6 +128,12 @@ export function EditableStickerLayer() {
         return
       }
 
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault()
+        undoLastChange()
+        return
+      }
+
       if (event.key === 'Escape') {
         saveStickers(stickers)
         setActiveId(null)
@@ -120,6 +141,7 @@ export function EditableStickerLayer() {
       }
 
       if ((event.key === 'Delete' || event.key === 'Backspace') && activeId) {
+        pushUndoSnapshot()
         setStickers((current) => current.map((sticker) => (sticker.id === activeId ? { ...sticker, deleted: true } : sticker)))
         setActiveId(null)
       }
@@ -187,8 +209,14 @@ export function EditableStickerLayer() {
       return
     }
 
+    const target = event.target as HTMLElement
+    if (target.closest('button,.sticker-handle,.editor-mini-toolbar')) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
+    pushUndoSnapshot()
     setActiveId(sticker.id)
 
     const rect = stickerRefs.current[sticker.id]?.getBoundingClientRect()
@@ -208,10 +236,12 @@ export function EditableStickerLayer() {
   }
 
   function updateSticker(id: string, patch: Partial<StickerState>) {
+    pushUndoSnapshot()
     setStickers((current) => current.map((sticker) => (sticker.id === id ? { ...sticker, ...patch } : sticker)))
   }
 
   function resetStickers() {
+    pushUndoSnapshot()
     const defaults = getDefaultStickers()
     setStickers(defaults)
     setActiveId(null)
@@ -220,7 +250,7 @@ export function EditableStickerLayer() {
 
   return (
     <>
-      {admin.editMode && <div className="sticker-edit-help">双击图片/文字编辑 · Esc 保存退出</div>}
+      {admin.editMode && <div className="sticker-edit-help">双击图片/文字编辑 · 拖拽任意位置移动 · Ctrl+Z 撤销</div>}
       {stickers.map((sticker) => {
         if (sticker.deleted) {
           return null
@@ -291,7 +321,7 @@ export function EditableStickerLayer() {
           </div>
         )
       })}
-      {admin.editMode && activeSticker && <div className="sticker-edit-status">正在编辑：拖动移动，右下角缩放，顶部旋转，Esc 保存</div>}
+      {admin.editMode && activeSticker && <div className="sticker-edit-status">正在编辑：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销</div>}
     </>
   )
 }

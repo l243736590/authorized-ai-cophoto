@@ -20,6 +20,7 @@ interface LayoutProps {
 }
 
 type BrandItemId = 'logo' | 'tagline'
+type BrandDragMode = 'move' | 'resize' | 'rotate'
 
 interface BrandItemState {
   x: number
@@ -32,7 +33,6 @@ interface BrandItemState {
 }
 
 type BrandState = Record<BrandItemId, BrandItemState>
-type BrandDragMode = 'move' | 'resize' | 'rotate'
 
 interface BrandDragState {
   id: BrandItemId
@@ -112,7 +112,9 @@ export function Layout({ children, compact = false }: LayoutProps) {
   const [brandDrag, setBrandDrag] = useState<BrandDragState | null>(null)
   const [, setLogoTapCount] = useState(0)
   const itemRefs = useRef<Record<BrandItemId, HTMLDivElement | null>>({ logo: null, tagline: null })
+  const undoStackRef = useRef<BrandState[]>([])
   const textLogoSrc = getTextLogoPath(language, isDay)
+  const activeItem = useMemo(() => (activeBrandId ? brand[activeBrandId] : null), [activeBrandId, brand])
   const nav = isKo
     ? {
         create: '제작',
@@ -134,7 +136,20 @@ export function Layout({ children, compact = false }: LayoutProps) {
         logoAlt: '授权同框 Licensed Frame',
         tagline: '用 AI 生成与明星的授权合照',
       }
-  const activeItem = useMemo(() => (activeBrandId ? brand[activeBrandId] : null), [activeBrandId, brand])
+
+  function pushUndoSnapshot(snapshot = brand) {
+    undoStackRef.current = [...undoStackRef.current.slice(-39), JSON.parse(JSON.stringify(snapshot)) as BrandState]
+  }
+
+  function undoLastChange() {
+    const previous = undoStackRef.current.pop()
+    if (!previous) {
+      return
+    }
+    setBrand(previous)
+    setActiveBrandId(null)
+    setBrandDrag(null)
+  }
 
   useEffect(() => {
     saveBrandState(brand)
@@ -142,6 +157,12 @@ export function Layout({ children, compact = false }: LayoutProps) {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && admin.editMode) {
+        event.preventDefault()
+        undoLastChange()
+        return
+      }
+
       if (event.key === 'Escape') {
         saveBrandState(brand)
         setActiveBrandId(null)
@@ -149,6 +170,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
       }
 
       if (admin.editMode && (event.key === 'Delete' || event.key === 'Backspace') && activeBrandId) {
+        pushUndoSnapshot()
         setBrand((current) => ({
           ...current,
           [activeBrandId]: { ...current[activeBrandId], deleted: true },
@@ -191,7 +213,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
             ...current,
             [currentDrag.id]: {
               ...currentItem,
-              width: Math.max(currentDrag.id === 'logo' ? 180 : 120, currentDrag.startItem.width + deltaX),
+              width: Math.max(currentDrag.id === 'logo' ? 120 : 120, currentDrag.startItem.width + deltaX),
             },
           }
         }
@@ -234,8 +256,14 @@ export function Layout({ children, compact = false }: LayoutProps) {
       return
     }
 
+    const target = event.target as HTMLElement
+    if (target.closest('button,.sticker-handle,.editor-mini-toolbar')) {
+      return
+    }
+
     event.preventDefault()
     event.stopPropagation()
+    pushUndoSnapshot()
     setActiveBrandId(id)
 
     const rect = itemRefs.current[id]?.getBoundingClientRect()
@@ -261,6 +289,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
 
     event.preventDefault()
     event.stopPropagation()
+    pushUndoSnapshot()
     setBrand((current) => ({ ...current, [id]: { ...current[id], deleted: true } }))
     setActiveBrandId(null)
   }
@@ -272,6 +301,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
 
     event.preventDefault()
     event.stopPropagation()
+    pushUndoSnapshot()
     setBrand((current) => ({ ...current, [id]: defaultBrandState[id] }))
     setActiveBrandId(null)
   }
@@ -281,12 +311,22 @@ export function Layout({ children, compact = false }: LayoutProps) {
       return
     }
 
+    pushUndoSnapshot()
     setBrand((current) => ({ ...current, [id]: defaultBrandState[id] }))
     setActiveBrandId(null)
   }
 
   function adjustBrandLayer(id: BrandItemId, delta: number) {
+    pushUndoSnapshot()
     setBrand((current) => ({ ...current, [id]: { ...current[id], zIndex: Math.max(1, current[id].zIndex + delta) } }))
+  }
+
+  function adjustTaglineFont(delta: number) {
+    pushUndoSnapshot()
+    setBrand((current) => ({
+      ...current,
+      tagline: { ...current.tagline, fontSize: Math.max(10, (current.tagline.fontSize ?? 14) + delta) },
+    }))
   }
 
   function handleLogoGatewayClick() {
@@ -421,28 +461,10 @@ export function Layout({ children, compact = false }: LayoutProps) {
               {activeBrandId === 'tagline' && admin.editMode && (
                 <>
                   <div className="editor-mini-toolbar editor-mini-toolbar--brand">
-                    <button
-                      type="button"
-                      onPointerDown={(event) => event.stopPropagation()}
-                      onClick={() =>
-                        setBrand((current) => ({
-                          ...current,
-                          tagline: { ...current.tagline, fontSize: Math.max(10, (current.tagline.fontSize ?? 14) - 2) },
-                        }))
-                      }
-                    >
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustTaglineFont(-2)}>
                       A-
                     </button>
-                    <button
-                      type="button"
-                      onPointerDown={(event) => event.stopPropagation()}
-                      onClick={() =>
-                        setBrand((current) => ({
-                          ...current,
-                          tagline: { ...current.tagline, fontSize: (current.tagline.fontSize ?? 14) + 2 },
-                        }))
-                      }
-                    >
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustTaglineFont(2)}>
                       A+
                     </button>
                     <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('tagline', 1)}>
@@ -499,7 +521,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
       </header>
       {admin.editMode && activeItem && (
         <div className="brand-edit-status">
-          正在编辑{activeBrandId === 'logo' ? ' LOGO' : '说明文字'}：拖动移动，右下角缩放，顶部旋转，Esc 保存退出
+          正在编辑{activeBrandId === 'logo' ? ' LOGO' : '说明文字'}：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销
         </div>
       )}
       <main>{children}</main>

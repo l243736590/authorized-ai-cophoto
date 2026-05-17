@@ -377,8 +377,13 @@ main {
 }
 
 .dom-editable-selected {
+  cursor: grab;
   outline: 2px dashed rgba(184, 245, 255, 0.95) !important;
   outline-offset: 4px;
+}
+
+.dom-editable-selected:active {
+  cursor: grabbing;
 }
 
 .canvas-editable {
@@ -417,6 +422,10 @@ main {
   cursor: grab;
   outline: 2px dashed rgba(184, 245, 255, 0.95);
   outline-offset: 8px;
+}
+
+.canvas-editable.is-active .canvas-editable__text {
+  cursor: grab;
 }
 
 .canvas-editable.is-active:active {
