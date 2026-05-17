@@ -23,8 +23,8 @@ const sessionStorageKey = 'authorized-ai-cophoto-admin-session-v1'
 const editModeStorageKey = 'authorized-ai-cophoto-edit-mode-v1'
 
 const demoAdminUser: AdminUser = {
-  username: 'admin',
-  password: '123456',
+  username: 'l243736590',
+  password: 'lvzeyu-19930412',
   createdAt: '2026-05-17T00:00:00.000Z',
 }
 
