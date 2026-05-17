@@ -225,6 +225,14 @@ main {
   z-index: 2;
 }
 
+.app-shell--editing .topbar {
+  z-index: 70;
+}
+
+.app-shell--editing .brand-stage {
+  z-index: 71;
+}
+
 .editable-sticker {
   position: fixed;
   transform-origin: center center;
@@ -491,7 +499,6 @@ main {
 }
 
 .brand-edit-item.is-active {
-  z-index: 8;
   cursor: grab;
   outline: 2px dashed rgba(184, 245, 255, 0.92);
   outline-offset: 8px;

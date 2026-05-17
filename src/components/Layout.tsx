@@ -345,7 +345,11 @@ export function Layout({ children, compact = false }: LayoutProps) {
   }
 
   return (
-    <div className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}`}>
+    <div
+      className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
+        admin.editMode ? ' app-shell--editing' : ''
+      }`}
+    >
       <EditableStickerLayer />
       <EditorCanvasLayer />
       <DomElementEditor />
@@ -393,10 +397,10 @@ export function Layout({ children, compact = false }: LayoutProps) {
               {activeBrandId === 'logo' && admin.editMode && (
                 <>
                   <div className="editor-mini-toolbar editor-mini-toolbar--brand">
-                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('logo', 1)}>
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('logo', 10)}>
                       图层上
                     </button>
-                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('logo', -1)}>
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('logo', -10)}>
                       图层下
                     </button>
                   </div>
@@ -467,10 +471,10 @@ export function Layout({ children, compact = false }: LayoutProps) {
                     <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustTaglineFont(2)}>
                       A+
                     </button>
-                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('tagline', 1)}>
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('tagline', 10)}>
                       图层上
                     </button>
-                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('tagline', -1)}>
+                    <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => adjustBrandLayer('tagline', -10)}>
                       图层下
                     </button>
                   </div>
