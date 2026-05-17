@@ -22,13 +22,15 @@ interface DragState {
   mode: DragMode
   startX: number
   startY: number
+  startScrollX: number
+  startScrollY: number
   startElement: CanvasElement
   centerX?: number
   centerY?: number
   startAngle?: number
 }
 
-const storageKey = 'authorized-ai-cophoto-editor-elements-v1'
+const storageKey = 'authorized-ai-cophoto-editor-elements-v2'
 
 function loadElements(): CanvasElement[] {
   try {
@@ -119,9 +121,15 @@ export function EditorCanvasLayer() {
 
           const deltaX = event.clientX - currentDrag.startX
           const deltaY = event.clientY - currentDrag.startY
+          const scrollDeltaX = window.scrollX - currentDrag.startScrollX
+          const scrollDeltaY = window.scrollY - currentDrag.startScrollY
 
           if (currentDrag.mode === 'move') {
-            return { ...element, x: currentDrag.startElement.x + deltaX, y: currentDrag.startElement.y + deltaY }
+            return {
+              ...element,
+              x: currentDrag.startElement.x + deltaX + scrollDeltaX,
+              y: currentDrag.startElement.y + deltaY + scrollDeltaY,
+            }
           }
 
           if (currentDrag.mode === 'resize') {
@@ -180,6 +188,8 @@ export function EditorCanvasLayer() {
       mode,
       startX: event.clientX,
       startY: event.clientY,
+      startScrollX: window.scrollX,
+      startScrollY: window.scrollY,
       startElement: element,
       centerX,
       centerY,
@@ -192,8 +202,8 @@ export function EditorCanvasLayer() {
       id: `text-${Date.now()}`,
       type: 'text',
       content: '双击编辑文字',
-      x: Math.max(24, window.innerWidth / 2 - 140),
-      y: 160,
+      x: window.scrollX + Math.max(24, window.innerWidth / 2 - 140),
+      y: window.scrollY + 160,
       width: 280,
       rotation: 0,
       fontSize: 28,
@@ -211,8 +221,8 @@ export function EditorCanvasLayer() {
         id: `image-${Date.now()}`,
         type: 'image',
         content: String(reader.result),
-        x: Math.max(24, window.innerWidth / 2 - 170),
-        y: 180,
+        x: window.scrollX + Math.max(24, window.innerWidth / 2 - 170),
+        y: window.scrollY + 180,
         width: 340,
         rotation: 0,
         fontSize: 16,

@@ -446,7 +446,7 @@ main {
 }
 
 .canvas-editable {
-  position: fixed;
+  position: absolute;
   transform-origin: center center;
   user-select: none;
   touch-action: none;
