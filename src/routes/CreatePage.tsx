@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { DisclaimerBox } from '../components/DisclaimerBox'
-import { EditableStickerLayer } from '../components/EditableStickerLayer'
 import { Layout } from '../components/Layout'
 import { UsageScopeBadge } from '../components/UsageScopeBadge'
 import { allowedUsageText, celebrities, coreDisclaimer, usageScopeLabels } from '../data/mockData'
@@ -116,7 +115,6 @@ const copy = {
 export function CreatePage() {
   const { language, isKo } = useLanguage()
   const text = copy[language]
-  const stampLogoPath = `/brand/${language}-mark-light.png`
   const [selectedCelebrityId, setSelectedCelebrityId] = useState(celebrities[0].id)
   const [usageScope, setUsageScope] = useState<UsageScope>('personal_collection')
   const [fileName, setFileName] = useState(text.noFile)
@@ -148,7 +146,6 @@ export function CreatePage() {
   return (
     <Layout>
       <section className="hero-panel hero-panel--fan hero-panel--product">
-        <EditableStickerLayer />
         <div className="hero-panel__copy">
           <p className="eyebrow">{text.heroEyebrow}</p>
           <h1>{text.heroTitle}</h1>
@@ -183,12 +180,6 @@ export function CreatePage() {
                 alt={isKo ? '축구 투샷 완성 사례' : '足球合影成品案例'}
                 onLoad={() => setFootballCaseImageReady(true)}
                 onError={() => setFootballCaseImageReady(false)}
-              />
-              <img
-                className="hero-preview-card__stamp"
-                src={stampLogoPath}
-                alt={isKo ? '공식 인증 인장' : '授权认证印章'}
-                aria-hidden="true"
               />
               {!footballCaseImageReady && (
                 <div className="case-image-frame__missing">

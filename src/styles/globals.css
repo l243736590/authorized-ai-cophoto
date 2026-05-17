@@ -255,15 +255,6 @@ button:disabled {
   filter: saturate(1.08) drop-shadow(0 26px 54px rgba(0, 0, 0, 0.38));
 }
 
-.editable-sticker-layer {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  width: 100%;
-  min-height: 100%;
-  pointer-events: none;
-}
-
 .topbar,
 main {
   position: relative;
@@ -279,7 +270,7 @@ main {
 }
 
 .editable-sticker {
-  position: absolute;
+  position: fixed;
   transform-origin: center center;
   user-select: none;
   cursor: zoom-in;
@@ -1212,18 +1203,6 @@ h2 {
   height: 100%;
   display: block;
   object-fit: cover;
-}
-
-.hero-preview-card__image .hero-preview-card__stamp {
-  position: absolute;
-  z-index: 3;
-  top: clamp(12px, 3.2vw, 22px);
-  right: clamp(12px, 3.2vw, 22px);
-  width: clamp(62px, 9vw, 96px);
-  height: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.42));
-  pointer-events: none;
 }
 
 .hero-cert-panel {

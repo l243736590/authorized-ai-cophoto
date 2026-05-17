@@ -11,6 +11,7 @@ import {
 import { useAdmin } from '../context/AdminContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { DomElementEditor } from './DomElementEditor'
+import { EditableStickerLayer } from './EditableStickerLayer'
 import { EditorCanvasLayer } from './EditorCanvasLayer'
 
 interface LayoutProps {
@@ -344,12 +345,12 @@ export function Layout({ children, compact = false }: LayoutProps) {
   }
 
   return (
-    <>
-      <div
-        className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
-          admin.editMode ? ' app-shell--editing' : ''
-        }`}
-      >
+    <div
+      className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
+        admin.editMode ? ' app-shell--editing' : ''
+      }`}
+    >
+        <EditableStickerLayer />
         <EditorCanvasLayer />
         <DomElementEditor />
         <header className="topbar">
@@ -529,6 +530,5 @@ export function Layout({ children, compact = false }: LayoutProps) {
         )}
         <main>{children}</main>
       </div>
-    </>
   )
 }
