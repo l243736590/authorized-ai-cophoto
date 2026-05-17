@@ -126,21 +126,28 @@ body::after {
 
 :root[data-theme="day"] body {
   background:
-    repeating-linear-gradient(100deg, rgba(15, 31, 61, 0.055) 0 1px, transparent 1px 46px),
-    linear-gradient(112deg, #fff8fb 0%, #ffe4f0 24%, #f3dcff 48%, #e8edff 72%, #fff7fb 100%);
+    repeating-linear-gradient(100deg, rgba(134, 86, 170, 0.045) 0 1px, transparent 1px 46px),
+    linear-gradient(115deg, #fff7fb 0%, #ffddec 18%, #f0d7ff 38%, #dce8ff 58%, #fff1cf 78%, #ffe7f5 100%);
   background-size:
     100% 100%,
-    380% 380%;
+    460% 460%;
+  animation: day-gradient-flow 11s ease-in-out infinite alternate;
 }
 
 :root[data-theme="day"] body::before {
   background:
-    radial-gradient(circle at 18% 20%, rgba(255, 152, 197, 0.34), transparent 34%),
-    radial-gradient(circle at 80% 18%, rgba(154, 120, 232, 0.26), transparent 30%),
-    radial-gradient(circle at 56% 82%, rgba(255, 235, 181, 0.32), transparent 34%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.32));
-  opacity: 0.76;
+    radial-gradient(circle at 16% 18%, rgba(255, 104, 174, 0.42), transparent 32%),
+    radial-gradient(circle at 82% 18%, rgba(138, 108, 255, 0.34), transparent 30%),
+    radial-gradient(circle at 54% 82%, rgba(255, 211, 117, 0.42), transparent 34%),
+    radial-gradient(circle at 72% 62%, rgba(121, 216, 255, 0.3), transparent 28%);
+  opacity: 0.92;
   mix-blend-mode: normal;
+  animation: day-ambient-color-drift 12s ease-in-out infinite alternate;
+}
+
+:root[data-theme="day"] body::after {
+  opacity: 0.46;
+  animation: day-background-veil-drift 14s ease-in-out infinite alternate;
 }
 
 button,
@@ -2482,6 +2489,60 @@ code,
   }
   100% {
     opacity: 0.62;
+    transform: translateX(0);
+  }
+}
+
+@keyframes day-gradient-flow {
+  0% {
+    background-position:
+      0 0,
+      0% 44%;
+    filter: saturate(1.04) hue-rotate(0deg);
+  }
+  45% {
+    background-position:
+      0 0,
+      100% 54%;
+    filter: saturate(1.22) hue-rotate(12deg);
+  }
+  100% {
+    background-position:
+      0 0,
+      24% 100%;
+    filter: saturate(1.16) hue-rotate(-10deg);
+  }
+}
+
+@keyframes day-ambient-color-drift {
+  0% {
+    background-position: 12% 16%, 82% 18%, 54% 82%, 72% 62%;
+    transform: scale(1);
+    opacity: 0.82;
+  }
+  50% {
+    background-position: 42% 10%, 60% 38%, 38% 68%, 82% 50%;
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    background-position: 8% 48%, 96% 28%, 72% 94%, 58% 74%;
+    transform: scale(1.04);
+    opacity: 0.9;
+  }
+}
+
+@keyframes day-background-veil-drift {
+  0% {
+    opacity: 0.34;
+    transform: translateX(-2.5%);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateX(2.5%);
+  }
+  100% {
+    opacity: 0.38;
     transform: translateX(0);
   }
 }
