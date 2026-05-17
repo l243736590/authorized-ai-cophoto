@@ -213,7 +213,7 @@ button:disabled {
 }
 
 .background-reference {
-  position: fixed;
+  position: absolute;
   z-index: 3;
   bottom: -26px;
   width: clamp(300px, 28vw, 560px);
@@ -239,7 +239,7 @@ button:disabled {
 }
 
 .foreground-sticker {
-  position: fixed;
+  position: absolute;
   z-index: 5;
   pointer-events: none;
   user-select: none;
@@ -253,6 +253,14 @@ button:disabled {
   transform: rotate(-30deg);
   transform-origin: 22% 70%;
   filter: saturate(1.08) drop-shadow(0 26px 54px rgba(0, 0, 0, 0.38));
+}
+
+.editable-sticker-layer {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100vw;
+  min-height: max(100%, 100vh);
+  pointer-events: none;
 }
 
 .topbar,
@@ -275,6 +283,7 @@ main {
   user-select: none;
   cursor: zoom-in;
   touch-action: none;
+  pointer-events: auto;
 }
 
 .editable-sticker img {

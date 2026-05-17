@@ -260,7 +260,7 @@ export function EditableStickerLayer() {
   }
 
   return (
-    <>
+    <div className="editable-sticker-layer" aria-hidden={!admin.editMode}>
       {admin.editMode && <div className="sticker-edit-help">双击图片/文字编辑 · 拖拽任意位置移动 · Ctrl+Z 撤销</div>}
       {stickers.map((sticker) => {
         if (sticker.deleted) {
@@ -333,6 +333,6 @@ export function EditableStickerLayer() {
         )
       })}
       {admin.editMode && activeSticker && <div className="sticker-edit-status">正在编辑：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销</div>}
-    </>
+    </div>
   )
 }

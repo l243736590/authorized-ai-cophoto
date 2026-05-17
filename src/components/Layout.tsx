@@ -345,15 +345,16 @@ export function Layout({ children, compact = false }: LayoutProps) {
   }
 
   return (
-    <div
-      className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
-        admin.editMode ? ' app-shell--editing' : ''
-      }`}
-    >
+    <>
       <EditableStickerLayer />
-      <EditorCanvasLayer />
-      <DomElementEditor />
-      <header className="topbar">
+      <div
+        className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
+          admin.editMode ? ' app-shell--editing' : ''
+        }`}
+      >
+        <EditorCanvasLayer />
+        <DomElementEditor />
+        <header className="topbar">
         <div className="brand-stage" aria-label={nav.logoAlt}>
           {brand.logo.deleted ? (
             <button className="brand-restore brand-restore--logo" type="button" onClick={() => restoreBrandItem('logo')}>
@@ -522,13 +523,14 @@ export function Layout({ children, compact = false }: LayoutProps) {
             </button>
           </div>
         </nav>
-      </header>
-      {admin.editMode && activeItem && (
-        <div className="brand-edit-status">
-          正在编辑{activeBrandId === 'logo' ? ' LOGO' : '说明文字'}：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销
-        </div>
-      )}
-      <main>{children}</main>
-    </div>
+        </header>
+        {admin.editMode && activeItem && (
+          <div className="brand-edit-status">
+            正在编辑{activeBrandId === 'logo' ? ' LOGO' : '说明文字'}：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销
+          </div>
+        )}
+        <main>{children}</main>
+      </div>
+    </>
   )
 }
