@@ -78,7 +78,7 @@ body {
     100% 100%,
     420% 420%;
   background-attachment: fixed;
-  animation: global-gradient-flow 52s ease-in-out infinite alternate;
+  animation: global-gradient-flow 16s ease-in-out infinite alternate;
 }
 
 body::before {
@@ -96,7 +96,7 @@ body::before {
   opacity: 0.82;
   mix-blend-mode: screen;
   pointer-events: none;
-  animation: ambient-color-drift 64s ease-in-out infinite alternate;
+  animation: ambient-color-drift 22s ease-in-out infinite alternate;
 }
 
 body::after {
@@ -112,7 +112,7 @@ body::after {
   background-size: 100% 100%;
   opacity: 0.64;
   mix-blend-mode: screen;
-  animation: background-veil-drift 58s ease-in-out infinite alternate;
+  animation: background-veil-drift 18s ease-in-out infinite alternate;
 }
 
 :root[data-theme="day"] body::after {
@@ -2437,48 +2437,48 @@ code,
     background-position:
       0 0,
       0% 42%;
-    filter: hue-rotate(0deg) saturate(1);
+    filter: hue-rotate(0deg) saturate(1.02);
   }
   50% {
     background-position:
       0 0,
       100% 58%;
-    filter: hue-rotate(10deg) saturate(1.08);
+    filter: hue-rotate(22deg) saturate(1.2);
   }
   100% {
     background-position:
       0 0,
       28% 100%;
-    filter: hue-rotate(-8deg) saturate(1.03);
+    filter: hue-rotate(-18deg) saturate(1.12);
   }
 }
 
 @keyframes ambient-color-drift {
   0% {
     background-position: 12% 20%, 82% 16%, 58% 84%, center;
-    opacity: 0.72;
+    opacity: 0.78;
     transform: scale(1);
   }
   50% {
-    background-position: 34% 8%, 64% 34%, 46% 70%, center;
-    opacity: 0.9;
-    transform: scale(1.04);
+    background-position: 46% 6%, 54% 42%, 36% 64%, center;
+    opacity: 1;
+    transform: scale(1.08);
   }
   100% {
-    background-position: 8% 42%, 92% 28%, 66% 92%, center;
-    opacity: 0.78;
-    transform: scale(1.02);
+    background-position: 4% 54%, 96% 30%, 72% 96%, center;
+    opacity: 0.84;
+    transform: scale(1.04);
   }
 }
 
 @keyframes background-veil-drift {
   0% {
     opacity: 0.58;
-    transform: translateX(-1.5%);
+    transform: translateX(-3%);
   }
   50% {
     opacity: 0.72;
-    transform: translateX(1.5%);
+    transform: translateX(3%);
   }
   100% {
     opacity: 0.62;
