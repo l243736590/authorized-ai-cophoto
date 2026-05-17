@@ -45,23 +45,23 @@ interface BrandDragState {
   startAngle?: number
 }
 
-const brandStorageKey = 'authorized-ai-cophoto-brand-v3'
+const brandStorageKey = 'authorized-ai-cophoto-brand-v4'
 const defaultBrandState: BrandState = {
   logo: {
-    x: -18,
-    y: -3,
-    width: 365,
+    x: 0,
+    y: 2,
+    width: 185,
     rotation: 0,
     zIndex: 6,
     deleted: false,
   },
   tagline: {
-    x: 14,
-    y: 58,
-    width: 300,
+    x: 2,
+    y: 78,
+    width: 260,
     rotation: 0,
     zIndex: 7,
-    fontSize: 14,
+    fontSize: 16,
     deleted: false,
   },
 }

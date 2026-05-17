@@ -26,7 +26,7 @@ interface DragState {
   startAngle?: number
 }
 
-const storageKey = 'authorized-ai-cophoto-stickers-v1'
+const storageKey = 'authorized-ai-cophoto-stickers-v2'
 
 function getDefaultStickers(): StickerState[] {
   const viewportWidth = window.innerWidth || 1440
@@ -37,9 +37,9 @@ function getDefaultStickers(): StickerState[] {
       id: 'son',
       src: '/references/son-heungmin-cutout.png',
       alt: '孙兴慜贴纸',
-      x: viewportWidth >= 900 ? -120 : -140,
-      y: viewportWidth >= 900 ? Math.max(330, viewportHeight - 500) : Math.max(330, viewportHeight - 360),
-      width: viewportWidth >= 900 ? 520 : 240,
+      x: viewportWidth >= 900 ? -72 : -140,
+      y: viewportWidth >= 900 ? Math.max(420, viewportHeight - 390) : Math.max(330, viewportHeight - 360),
+      width: viewportWidth >= 900 ? 385 : 240,
       rotation: 0,
       zIndex: 3,
     },
@@ -47,19 +47,19 @@ function getDefaultStickers(): StickerState[] {
       id: 'bean',
       src: '/references/mr-bean.png',
       alt: '憨豆贴纸',
-      x: viewportWidth >= 900 ? -58 : -54,
-      y: viewportWidth >= 900 ? 18 : 28,
-      width: viewportWidth >= 900 ? 390 : 245,
-      rotation: -30,
+      x: viewportWidth >= 900 ? -146 : -80,
+      y: viewportWidth >= 900 ? -122 : -72,
+      width: viewportWidth >= 900 ? 455 : 285,
+      rotation: -105,
       zIndex: 5,
     },
     {
       id: 'zhang',
       src: '/references/zhang-wonyoung-cutout.png',
       alt: '张元英贴纸',
-      x: viewportWidth >= 900 ? viewportWidth - 430 : viewportWidth - 100,
-      y: viewportWidth >= 900 ? 250 : Math.max(250, viewportHeight - 360),
-      width: viewportWidth >= 900 ? 520 : 240,
+      x: viewportWidth >= 900 ? viewportWidth - 330 : viewportWidth - 100,
+      y: viewportWidth >= 900 ? 254 : Math.max(250, viewportHeight - 360),
+      width: viewportWidth >= 900 ? 410 : 240,
       rotation: 0,
       zIndex: 3,
     },
