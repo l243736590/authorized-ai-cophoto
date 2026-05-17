@@ -2446,19 +2446,16 @@ code,
     background-position:
       0 0,
       0% 42%;
-    filter: hue-rotate(0deg) saturate(1.02);
   }
   50% {
     background-position:
       0 0,
       100% 58%;
-    filter: hue-rotate(22deg) saturate(1.2);
   }
   100% {
     background-position:
       0 0,
       28% 100%;
-    filter: hue-rotate(-18deg) saturate(1.12);
   }
 }
 
@@ -2500,19 +2497,16 @@ code,
     background-position:
       0 0,
       0% 44%;
-    filter: saturate(1.04) hue-rotate(0deg);
   }
   45% {
     background-position:
       0 0,
       100% 54%;
-    filter: saturate(1.22) hue-rotate(12deg);
   }
   100% {
     background-position:
       0 0,
       24% 100%;
-    filter: saturate(1.16) hue-rotate(-10deg);
   }
 }
 
