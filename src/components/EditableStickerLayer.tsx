@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { useAdmin } from '../context/AdminContext'
 
 interface StickerState {
@@ -26,7 +27,7 @@ interface DragState {
   startAngle?: number
 }
 
-const storageKey = 'authorized-ai-cophoto-stickers-bottom-v1'
+const storageKey = 'authorized-ai-cophoto-stickers-bottom-v2'
 
 function getDefaultStickers(): StickerState[] {
   const viewportWidth = window.innerWidth || 1440
@@ -37,7 +38,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/son-heungmin-cutout.png',
       alt: '孙兴慜贴纸',
       x: viewportWidth >= 900 ? -72 : -140,
-      y: viewportWidth >= 900 ? -36 : -24,
+      y: viewportWidth >= 900 ? -24 : -18,
       width: viewportWidth >= 900 ? 385 : 240,
       rotation: 0,
       zIndex: 3,
@@ -47,7 +48,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/mr-bean.png',
       alt: '憨豆贴纸',
       x: viewportWidth >= 900 ? -146 : -80,
-      y: viewportWidth >= 900 ? -42 : -24,
+      y: viewportWidth >= 900 ? -28 : -18,
       width: viewportWidth >= 900 ? 455 : 285,
       rotation: -105,
       zIndex: 5,
@@ -57,7 +58,7 @@ function getDefaultStickers(): StickerState[] {
       src: '/references/zhang-wonyoung-cutout.png',
       alt: '张元英贴纸',
       x: viewportWidth >= 900 ? viewportWidth - 405 : viewportWidth - 220,
-      y: viewportWidth >= 900 ? -4 : -8,
+      y: viewportWidth >= 900 ? -18 : -12,
       width: viewportWidth >= 900 ? 410 : 240,
       rotation: 0,
       zIndex: 3,
@@ -251,8 +252,13 @@ export function EditableStickerLayer() {
     saveStickers(defaults)
   }
 
-  return (
-    <>
+  const portalNode = typeof document === 'undefined' ? null : document.body
+  if (!portalNode) {
+    return null
+  }
+
+  return createPortal(
+    <div className="editable-sticker-viewport-layer">
       {admin.editMode && <div className="sticker-edit-help">双击图片/文字编辑 · 拖拽任意位置移动 · Ctrl+Z 撤销</div>}
       {stickers.map((sticker) => {
         if (sticker.deleted) {
@@ -275,6 +281,7 @@ export function EditableStickerLayer() {
               width: sticker.width,
               zIndex: sticker.zIndex + (isActive ? 10 : 0),
               transform: `rotate(${sticker.rotation}deg)`,
+              pointerEvents: admin.editMode ? 'auto' : 'none',
             }}
             onDoubleClick={(event) => {
               if (admin.editMode) {
@@ -326,6 +333,7 @@ export function EditableStickerLayer() {
         )
       })}
       {admin.editMode && activeSticker && <div className="sticker-edit-status">正在编辑：拖动任意位置移动，右下角缩放，顶部旋转，Ctrl+Z 撤销</div>}
-    </>
+    </div>,
+    portalNode,
   )
 }

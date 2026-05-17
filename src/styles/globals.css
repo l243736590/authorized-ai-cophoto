@@ -269,8 +269,18 @@ main {
   z-index: 71;
 }
 
-.editable-sticker {
+.editable-sticker-viewport-layer {
   position: fixed;
+  z-index: 55;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.editable-sticker {
+  position: absolute;
   transform-origin: center center;
   user-select: none;
   cursor: zoom-in;
