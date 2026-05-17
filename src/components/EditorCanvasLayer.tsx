@@ -33,6 +33,7 @@ interface DragState {
 const storageKey = 'authorized-ai-cophoto-editor-elements-v2'
 const maxStoredImageSide = 1200
 const maxStoredImageBytes = 1_400_000
+const transparentImageSides = [1200, 900, 700, 520, 380]
 
 function loadElements(): CanvasElement[] {
   try {
@@ -72,25 +73,62 @@ function loadImage(src: string) {
 async function prepareImageForEditor(file: File) {
   const originalDataUrl = await readFileAsDataUrl(file)
   const image = await loadImage(originalDataUrl)
-  const scale = Math.min(1, maxStoredImageSide / Math.max(image.naturalWidth, image.naturalHeight))
-  const width = Math.max(1, Math.round(image.naturalWidth * scale))
-  const height = Math.max(1, Math.round(image.naturalHeight * scale))
+  const naturalSide = Math.max(image.naturalWidth, image.naturalHeight)
 
-  const canvas = document.createElement('canvas')
-  canvas.width = width
-  canvas.height = height
-  const context = canvas.getContext('2d')
-  if (!context) {
+  function renderToCanvas(maxSide: number) {
+    const scale = Math.min(1, maxSide / naturalSide)
+    const width = Math.max(1, Math.round(image.naturalWidth * scale))
+    const height = Math.max(1, Math.round(image.naturalHeight * scale))
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const context = canvas.getContext('2d')
+    if (!context) {
+      return null
+    }
+    context.clearRect(0, 0, width, height)
+    context.drawImage(image, 0, 0, width, height)
+    return { canvas, context, width, height }
+  }
+
+  function hasTransparentPixels(context: CanvasRenderingContext2D, width: number, height: number) {
+    const pixels = context.getImageData(0, 0, width, height).data
+    for (let index = 3; index < pixels.length; index += 4) {
+      if (pixels[index] < 255) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const firstRender = renderToCanvas(maxStoredImageSide)
+  if (!firstRender) {
     return originalDataUrl
   }
 
-  context.drawImage(image, 0, 0, width, height)
-  const pngDataUrl = canvas.toDataURL('image/png')
-  if (pngDataUrl.length <= maxStoredImageBytes) {
-    return pngDataUrl
+  const isTransparent = hasTransparentPixels(firstRender.context, firstRender.width, firstRender.height)
+  const firstPng = firstRender.canvas.toDataURL('image/png')
+  if (firstPng.length <= maxStoredImageBytes) {
+    return firstPng
   }
 
-  return canvas.toDataURL('image/jpeg', 0.82)
+  if (isTransparent) {
+    for (const side of transparentImageSides.slice(1)) {
+      const render = renderToCanvas(side)
+      if (!render) {
+        continue
+      }
+      const pngDataUrl = render.canvas.toDataURL('image/png')
+      if (pngDataUrl.length <= maxStoredImageBytes) {
+        return pngDataUrl
+      }
+    }
+
+    const smallestRender = renderToCanvas(transparentImageSides[transparentImageSides.length - 1])
+    return smallestRender ? smallestRender.canvas.toDataURL('image/png') : originalDataUrl
+  }
+
+  return firstRender.canvas.toDataURL('image/jpeg', 0.82)
 }
 
 function getPointerAngle(clientX: number, clientY: number, centerX: number, centerY: number) {
