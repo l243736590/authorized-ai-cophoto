@@ -31,6 +31,8 @@ interface DragState {
 }
 
 const storageKey = 'authorized-ai-cophoto-editor-elements-v2'
+const maxStoredImageSide = 1200
+const maxStoredImageBytes = 1_400_000
 
 function loadElements(): CanvasElement[] {
   try {
@@ -42,7 +44,53 @@ function loadElements(): CanvasElement[] {
 }
 
 function saveElements(elements: CanvasElement[]) {
-  window.localStorage.setItem(storageKey, JSON.stringify(elements))
+  try {
+    window.localStorage.setItem(storageKey, JSON.stringify(elements))
+  } catch (error) {
+    console.warn('Unable to persist editor elements. The uploaded image may be too large for localStorage.', error)
+  }
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result))
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = reject
+    image.src = src
+  })
+}
+
+async function prepareImageForEditor(file: File) {
+  const originalDataUrl = await readFileAsDataUrl(file)
+  const image = await loadImage(originalDataUrl)
+  const scale = Math.min(1, maxStoredImageSide / Math.max(image.naturalWidth, image.naturalHeight))
+  const width = Math.max(1, Math.round(image.naturalWidth * scale))
+  const height = Math.max(1, Math.round(image.naturalHeight * scale))
+
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const context = canvas.getContext('2d')
+  if (!context) {
+    return originalDataUrl
+  }
+
+  context.drawImage(image, 0, 0, width, height)
+  const pngDataUrl = canvas.toDataURL('image/png')
+  if (pngDataUrl.length <= maxStoredImageBytes) {
+    return pngDataUrl
+  }
+
+  return canvas.toDataURL('image/jpeg', 0.82)
 }
 
 function getPointerAngle(clientX: number, clientY: number, centerX: number, centerY: number) {
@@ -214,13 +262,13 @@ export function EditorCanvasLayer() {
     setActiveId(next.id)
   }
 
-  function addImage(file: File) {
-    const reader = new FileReader()
-    reader.onload = () => {
+  async function addImage(file: File) {
+    try {
+      const content = await prepareImageForEditor(file)
       const next: CanvasElement = {
         id: `image-${Date.now()}`,
         type: 'image',
-        content: String(reader.result),
+        content,
         x: window.scrollX + Math.max(24, window.innerWidth / 2 - 170),
         y: window.scrollY + 180,
         width: 340,
@@ -231,8 +279,10 @@ export function EditorCanvasLayer() {
       pushUndoSnapshot()
       setElements((current) => [...current, next])
       setActiveId(next.id)
+    } catch (error) {
+      console.error('Failed to add image', error)
+      window.alert('图片添加失败，请换一张尺寸更小的图片再试。')
     }
-    reader.readAsDataURL(file)
   }
 
   function updateElement(id: string, patch: Partial<CanvasElement>) {
