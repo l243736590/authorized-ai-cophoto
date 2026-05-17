@@ -100,6 +100,7 @@ export function EditableStickerLayer() {
   const [stickers, setStickers] = useState<StickerState[]>(() => loadStickers())
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragState, setDragState] = useState<DragState | null>(null)
+  const [scrollOffset, setScrollOffset] = useState(() => ({ x: window.scrollX || 0, y: window.scrollY || 0 }))
   const stickerRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const undoStackRef = useRef<StickerState[][]>([])
   const activeSticker = useMemo(
@@ -124,6 +125,26 @@ export function EditableStickerLayer() {
   useEffect(() => {
     saveStickers(stickers)
   }, [stickers])
+
+  useEffect(() => {
+    let frame = 0
+
+    function syncScrollOffset() {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        setScrollOffset({ x: window.scrollX || 0, y: window.scrollY || 0 })
+      })
+    }
+
+    syncScrollOffset()
+    window.addEventListener('scroll', syncScrollOffset, { passive: true })
+    window.addEventListener('resize', syncScrollOffset)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', syncScrollOffset)
+      window.removeEventListener('resize', syncScrollOffset)
+    }
+  }, [])
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -277,8 +298,8 @@ export function EditableStickerLayer() {
             }}
             className={isActive ? 'editable-sticker is-active' : 'editable-sticker'}
             style={{
-              left: sticker.x,
-              top: sticker.y,
+              left: sticker.x - scrollOffset.x,
+              top: sticker.y - scrollOffset.y,
               width: sticker.width,
               zIndex: sticker.zIndex + (isActive ? 10 : 0),
               transform: `rotate(${sticker.rotation}deg)`,
