@@ -73,21 +73,30 @@ body {
   overflow-x: hidden;
   background:
     repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 46px),
-    var(--global-gradient);
+    linear-gradient(112deg, #07091a 0%, #111832 18%, #1c336b 38%, #4b2d67 58%, #8d3475 78%, #17142c 100%);
   background-size:
     100% 100%,
-    240% 240%;
+    420% 420%;
   background-attachment: fixed;
-  animation: global-gradient-flow 18s ease-in-out infinite alternate;
+  animation: global-gradient-flow 52s ease-in-out infinite alternate;
 }
 
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgba(8, 11, 29, 0.05), rgba(8, 11, 29, 0.24));
+  z-index: 0;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(53, 126, 255, 0.26), transparent 34%),
+    radial-gradient(circle at 82% 16%, rgba(255, 73, 164, 0.24), transparent 30%),
+    radial-gradient(circle at 58% 84%, rgba(201, 154, 68, 0.18), transparent 34%),
+    linear-gradient(180deg, rgba(8, 11, 29, 0.02), rgba(8, 11, 29, 0.28));
+  background-size: 180% 180%, 170% 170%, 190% 190%, 100% 100%;
+  background-position: 12% 20%, 82% 16%, 58% 84%, center;
+  opacity: 0.82;
+  mix-blend-mode: screen;
   pointer-events: none;
+  animation: ambient-color-drift 64s ease-in-out infinite alternate;
 }
 
 body::after {
@@ -103,6 +112,7 @@ body::after {
   background-size: 100% 100%;
   opacity: 0.64;
   mix-blend-mode: screen;
+  animation: background-veil-drift 58s ease-in-out infinite alternate;
 }
 
 :root[data-theme="day"] body::after {
@@ -111,6 +121,25 @@ body::after {
     radial-gradient(circle at 84% 20%, rgba(232, 76, 138, 0.18), transparent 28%),
     linear-gradient(90deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.62) 24%, rgba(255, 255, 255, 0.56) 76%, rgba(255, 255, 255, 0.18));
   opacity: 0.92;
+  mix-blend-mode: normal;
+}
+
+:root[data-theme="day"] body {
+  background:
+    repeating-linear-gradient(100deg, rgba(15, 31, 61, 0.055) 0 1px, transparent 1px 46px),
+    linear-gradient(112deg, #fff8fb 0%, #ffe4f0 24%, #f3dcff 48%, #e8edff 72%, #fff7fb 100%);
+  background-size:
+    100% 100%,
+    380% 380%;
+}
+
+:root[data-theme="day"] body::before {
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 152, 197, 0.34), transparent 34%),
+    radial-gradient(circle at 80% 18%, rgba(154, 120, 232, 0.26), transparent 30%),
+    radial-gradient(circle at 56% 82%, rgba(255, 235, 181, 0.32), transparent 34%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.32));
+  opacity: 0.76;
   mix-blend-mode: normal;
 }
 
@@ -2407,17 +2436,53 @@ code,
   0% {
     background-position:
       0 0,
-      0% 50%;
+      0% 42%;
+    filter: hue-rotate(0deg) saturate(1);
   }
   50% {
     background-position:
       0 0,
-      100% 50%;
+      100% 58%;
+    filter: hue-rotate(10deg) saturate(1.08);
   }
   100% {
     background-position:
       0 0,
-      35% 100%;
+      28% 100%;
+    filter: hue-rotate(-8deg) saturate(1.03);
+  }
+}
+
+@keyframes ambient-color-drift {
+  0% {
+    background-position: 12% 20%, 82% 16%, 58% 84%, center;
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  50% {
+    background-position: 34% 8%, 64% 34%, 46% 70%, center;
+    opacity: 0.9;
+    transform: scale(1.04);
+  }
+  100% {
+    background-position: 8% 42%, 92% 28%, 66% 92%, center;
+    opacity: 0.78;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes background-veil-drift {
+  0% {
+    opacity: 0.58;
+    transform: translateX(-1.5%);
+  }
+  50% {
+    opacity: 0.72;
+    transform: translateX(1.5%);
+  }
+  100% {
+    opacity: 0.62;
+    transform: translateX(0);
   }
 }
 
