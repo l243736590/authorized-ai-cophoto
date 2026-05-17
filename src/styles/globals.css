@@ -389,7 +389,8 @@ main {
   position: fixed;
   z-index: 80;
   right: 16px;
-  bottom: 16px;
+  top: min(28vh, 220px);
+  bottom: auto;
   padding: 8px;
 }
 
