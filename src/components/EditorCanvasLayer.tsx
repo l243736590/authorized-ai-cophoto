@@ -223,6 +223,7 @@ export function EditorCanvasLayer() {
   const elementRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const undoStackRef = useRef<CanvasElement[][]>([])
+  const migratingInlineImagesRef = useRef(false)
   const activeElement = useMemo(() => elements.find((element) => element.id === activeId && !element.deleted), [activeId, elements])
 
   function pushUndoSnapshot(snapshot = elements) {
@@ -268,6 +269,33 @@ export function EditorCanvasLayer() {
     saveElements(elements)
 
     if (!admin.isAuthenticated || !remoteHydrated) {
+      return
+    }
+
+    const inlineImages = elements.filter((element) => element.type === 'image' && element.content.startsWith('data:image/'))
+    if (inlineImages.length > 0 && !migratingInlineImagesRef.current) {
+      migratingInlineImagesRef.current = true
+      Promise.all(
+        inlineImages.map(async (element) => ({
+          id: element.id,
+          content: await uploadEditorAsset(element.content, `${element.id}.png`),
+        })),
+      )
+        .then((migratedImages) => {
+          const migratedById = new Map(migratedImages.map((image) => [image.id, image.content]))
+          setElements((current) =>
+            current.map((element) => {
+              const migratedContent = migratedById.get(element.id)
+              return migratedContent ? { ...element, content: migratedContent } : element
+            }),
+          )
+        })
+        .catch((error) => {
+          console.warn('Unable to migrate inline editor images to Cloudflare.', error)
+        })
+        .finally(() => {
+          migratingInlineImagesRef.current = false
+        })
       return
     }
 
