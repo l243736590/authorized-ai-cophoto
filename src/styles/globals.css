@@ -279,7 +279,7 @@ main {
 }
 
 .editable-sticker {
-  position: fixed;
+  position: absolute;
   transform-origin: center center;
   user-select: none;
   cursor: zoom-in;

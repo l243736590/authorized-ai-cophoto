@@ -20,15 +20,13 @@ interface DragState {
   mode: DragMode
   startX: number
   startY: number
-  startScrollX: number
-  startScrollY: number
   startSticker: StickerState
   centerX?: number
   centerY?: number
   startAngle?: number
 }
 
-const storageKey = 'authorized-ai-cophoto-stickers-v2'
+const storageKey = 'authorized-ai-cophoto-stickers-v3'
 
 function getDefaultStickers(): StickerState[] {
   const viewportWidth = window.innerWidth || 1440
@@ -100,7 +98,6 @@ export function EditableStickerLayer() {
   const [stickers, setStickers] = useState<StickerState[]>(() => loadStickers())
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragState, setDragState] = useState<DragState | null>(null)
-  const [scrollOffset, setScrollOffset] = useState(() => ({ x: window.scrollX || 0, y: window.scrollY || 0 }))
   const stickerRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const undoStackRef = useRef<StickerState[][]>([])
   const activeSticker = useMemo(
@@ -125,26 +122,6 @@ export function EditableStickerLayer() {
   useEffect(() => {
     saveStickers(stickers)
   }, [stickers])
-
-  useEffect(() => {
-    let frame = 0
-
-    function syncScrollOffset() {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        setScrollOffset({ x: window.scrollX || 0, y: window.scrollY || 0 })
-      })
-    }
-
-    syncScrollOffset()
-    window.addEventListener('scroll', syncScrollOffset, { passive: true })
-    window.addEventListener('resize', syncScrollOffset)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', syncScrollOffset)
-      window.removeEventListener('resize', syncScrollOffset)
-    }
-  }, [])
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -191,14 +168,12 @@ export function EditableStickerLayer() {
 
           const deltaX = event.clientX - currentDrag.startX
           const deltaY = event.clientY - currentDrag.startY
-          const scrollDeltaX = window.scrollX - currentDrag.startScrollX
-          const scrollDeltaY = window.scrollY - currentDrag.startScrollY
 
           if (currentDrag.mode === 'move') {
             return {
               ...sticker,
-              x: currentDrag.startSticker.x + deltaX + scrollDeltaX,
-              y: currentDrag.startSticker.y + deltaY + scrollDeltaY,
+              x: currentDrag.startSticker.x + deltaX,
+              y: currentDrag.startSticker.y + deltaY,
             }
           }
 
@@ -258,8 +233,6 @@ export function EditableStickerLayer() {
       mode,
       startX: event.clientX,
       startY: event.clientY,
-      startScrollX: window.scrollX,
-      startScrollY: window.scrollY,
       startSticker: sticker,
       centerX,
       centerY,
@@ -298,8 +271,8 @@ export function EditableStickerLayer() {
             }}
             className={isActive ? 'editable-sticker is-active' : 'editable-sticker'}
             style={{
-              left: sticker.x - scrollOffset.x,
-              top: sticker.y - scrollOffset.y,
+              left: sticker.x,
+              top: sticker.y,
               width: sticker.width,
               zIndex: sticker.zIndex + (isActive ? 10 : 0),
               transform: `rotate(${sticker.rotation}deg)`,
