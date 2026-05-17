@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { DisclaimerBox } from '../components/DisclaimerBox'
+import { EditableStickerLayer } from '../components/EditableStickerLayer'
 import { Layout } from '../components/Layout'
 import { UsageScopeBadge } from '../components/UsageScopeBadge'
 import { allowedUsageText, celebrities, coreDisclaimer, usageScopeLabels } from '../data/mockData'
@@ -147,6 +148,7 @@ export function CreatePage() {
   return (
     <Layout>
       <section className="hero-panel hero-panel--fan hero-panel--product">
+        <EditableStickerLayer />
         <div className="hero-panel__copy">
           <p className="eyebrow">{text.heroEyebrow}</p>
           <h1>{text.heroTitle}</h1>

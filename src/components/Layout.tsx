@@ -12,7 +12,6 @@ import { useAdmin } from '../context/AdminContext'
 import { useLanguage } from '../i18n/LanguageContext'
 import { DomElementEditor } from './DomElementEditor'
 import { EditorCanvasLayer } from './EditorCanvasLayer'
-import { EditableStickerLayer } from './EditableStickerLayer'
 
 interface LayoutProps {
   children: ReactNode
@@ -346,7 +345,6 @@ export function Layout({ children, compact = false }: LayoutProps) {
 
   return (
     <>
-      <EditableStickerLayer />
       <div
         className={`${compact ? 'app-shell app-shell--compact' : 'app-shell'} app-shell--${language} app-shell--${theme}${
           admin.editMode ? ' app-shell--editing' : ''
