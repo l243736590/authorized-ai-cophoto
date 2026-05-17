@@ -210,7 +210,7 @@ export function EditableStickerLayer() {
     }
 
     const target = event.target as HTMLElement
-    if (target.closest('button,.sticker-handle,.editor-mini-toolbar')) {
+    if (mode === 'move' && target.closest('button,.sticker-handle,.editor-mini-toolbar')) {
       return
     }
 
