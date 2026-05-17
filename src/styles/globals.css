@@ -660,6 +660,18 @@ main {
   font-weight: 800;
 }
 
+.auth-demo-credential {
+  display: inline-flex;
+  margin: 0 0 12px;
+  border: 1px solid rgba(201, 154, 68, 0.42);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(201, 154, 68, 0.12);
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 850;
+}
+
 .brand strong,
 .brand small {
   display: block;

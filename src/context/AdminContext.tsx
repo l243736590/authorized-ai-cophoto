@@ -22,12 +22,25 @@ const usersStorageKey = 'authorized-ai-cophoto-admin-users-v1'
 const sessionStorageKey = 'authorized-ai-cophoto-admin-session-v1'
 const editModeStorageKey = 'authorized-ai-cophoto-edit-mode-v1'
 
+const demoAdminUser: AdminUser = {
+  username: 'admin',
+  password: '123456',
+  createdAt: '2026-05-17T00:00:00.000Z',
+}
+
+function mergeDemoUser(users: AdminUser[]) {
+  if (users.some((user) => user.username === demoAdminUser.username)) {
+    return users
+  }
+  return [demoAdminUser, ...users]
+}
+
 function loadUsers(): AdminUser[] {
   try {
     const saved = window.localStorage.getItem(usersStorageKey)
-    return saved ? (JSON.parse(saved) as AdminUser[]) : []
+    return mergeDemoUser(saved ? (JSON.parse(saved) as AdminUser[]) : [])
   } catch {
-    return []
+    return [demoAdminUser]
   }
 }
 
