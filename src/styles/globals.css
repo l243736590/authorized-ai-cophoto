@@ -1168,6 +1168,18 @@ h2 {
   object-fit: cover;
 }
 
+.hero-preview-card__image .hero-preview-card__stamp {
+  position: absolute;
+  z-index: 3;
+  top: clamp(12px, 3.2vw, 22px);
+  right: clamp(12px, 3.2vw, 22px);
+  width: clamp(62px, 9vw, 96px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.42));
+  pointer-events: none;
+}
+
 .hero-cert-panel {
   width: min(420px, 72%);
   justify-self: end;

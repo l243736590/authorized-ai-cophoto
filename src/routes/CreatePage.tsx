@@ -115,6 +115,7 @@ const copy = {
 export function CreatePage() {
   const { language, isKo } = useLanguage()
   const text = copy[language]
+  const stampLogoPath = `/brand/${language}-mark-light.png`
   const [selectedCelebrityId, setSelectedCelebrityId] = useState(celebrities[0].id)
   const [usageScope, setUsageScope] = useState<UsageScope>('personal_collection')
   const [fileName, setFileName] = useState(text.noFile)
@@ -180,6 +181,12 @@ export function CreatePage() {
                 alt={isKo ? '축구 투샷 완성 사례' : '足球合影成品案例'}
                 onLoad={() => setFootballCaseImageReady(true)}
                 onError={() => setFootballCaseImageReady(false)}
+              />
+              <img
+                className="hero-preview-card__stamp"
+                src={stampLogoPath}
+                alt={isKo ? '공식 인증 인장' : '授权认证印章'}
+                aria-hidden="true"
               />
               {!footballCaseImageReady && (
                 <div className="case-image-frame__missing">
