@@ -2,6 +2,35 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## EdgeOne Pages deployment
+
+This project is prepared for Tencent Cloud EdgeOne Pages.
+
+- Framework preset: Vite
+- Install command: `npm ci`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node version: `22.11.0`
+- Functions directory: `cloud-functions`
+
+The admin editor APIs are implemented as EdgeOne Cloud Functions:
+
+- `GET`/`PUT /api/editor-state`
+- `GET`/`POST /api/editor-assets`
+
+They store editor state and uploaded images in EdgeOne Pages Blob store
+`authorized-ai-cophoto-editor`.
+
+To deploy from the CLI after logging in:
+
+```bash
+npx edgeone login
+npx edgeone pages deploy -n authorized-ai-cophoto
+```
+
+Alternatively, import the GitHub repository in EdgeOne Pages and keep the settings from
+`edgeone.json`.
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)

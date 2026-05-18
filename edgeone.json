@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "outputDirectory": "./dist",
+  "nodeVersion": "22.11.0",
+  "cloudFunctions": {
+    "mainlandRegions": ["ap-guangzhou"],
+    "overseasRegions": ["ap-hongkong"],
+    "nodejs": {
+      "maxDuration": 30
+    }
+  }
+}
