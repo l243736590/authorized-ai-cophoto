@@ -258,7 +258,7 @@ export function EditableStickerLayer() {
   }
 
   return createPortal(
-    <div className="editable-sticker-viewport-layer">
+    <div className={admin.editMode ? 'editable-sticker-viewport-layer is-editing' : 'editable-sticker-viewport-layer'}>
       {admin.editMode && <div className="sticker-edit-help">双击图片/文字编辑 · 拖拽任意位置移动 · Ctrl+Z 撤销</div>}
       {stickers.map((sticker) => {
         if (sticker.deleted) {
