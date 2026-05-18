@@ -1212,11 +1212,15 @@ h2 {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.hero-preview-card__image img {
+.hero-preview-card__image > img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+.mobile-idol-stickers {
+  display: none;
 }
 
 .hero-cert-panel {
@@ -2946,7 +2950,66 @@ code,
   }
 
   .hero-preview-card__image {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1.08;
+    background:
+      linear-gradient(180deg, rgba(10, 15, 34, 0.02), rgba(10, 15, 34, 0.38)),
+      rgba(255, 255, 255, 0.05);
+  }
+
+  .hero-preview-card__image::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    z-index: 3;
+    height: 44%;
+    background:
+      linear-gradient(0deg, rgba(5, 8, 18, 0.74), rgba(5, 8, 18, 0.1) 72%, transparent),
+      linear-gradient(90deg, rgba(255, 79, 139, 0.22), transparent 36%, rgba(59, 185, 201, 0.18));
+    pointer-events: none;
+  }
+
+  .hero-preview-card__image > img {
+    object-position: 50% 20%;
+  }
+
+  .mobile-idol-stickers {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: block;
+    pointer-events: none;
+  }
+
+  .mobile-idol-sticker {
+    position: absolute;
+    height: auto;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+    filter: saturate(1.08) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.42));
+  }
+
+  .mobile-idol-sticker--son {
+    left: -34px;
+    bottom: -18px;
+    z-index: 2;
+    width: clamp(138px, 43vw, 176px);
+    transform: rotate(-4deg);
+  }
+
+  .mobile-idol-sticker--zhang {
+    right: -22px;
+    bottom: -12px;
+    z-index: 3;
+    width: clamp(148px, 47vw, 190px);
+  }
+
+  .mobile-idol-sticker--bean {
+    left: -44px;
+    bottom: -44px;
+    z-index: 5;
+    width: clamp(92px, 30vw, 122px);
+    transform: rotate(-18deg);
   }
 
   .hero-preview-card__bar,

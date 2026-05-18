@@ -187,6 +187,11 @@ export function CreatePage() {
                   <span>{text.missingFootball}</span>
                 </div>
               )}
+              <div className="mobile-idol-stickers" aria-hidden="true">
+                <img className="mobile-idol-sticker mobile-idol-sticker--son" src="/references/son-heungmin-cutout.png" alt="" />
+                <img className="mobile-idol-sticker mobile-idol-sticker--zhang" src="/references/zhang-wonyoung-cutout.png" alt="" />
+                <img className="mobile-idol-sticker mobile-idol-sticker--bean" src="/references/mr-bean.png" alt="" />
+              </div>
             </div>
           </div>
 
