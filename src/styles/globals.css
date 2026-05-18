@@ -2990,26 +2990,28 @@ code,
   }
 
   .mobile-idol-sticker--son {
-    left: -34px;
-    bottom: -18px;
+    left: -42px;
+    bottom: -10px;
     z-index: 2;
-    width: clamp(138px, 43vw, 176px);
-    transform: rotate(-4deg);
+    width: clamp(152px, 47vw, 188px);
+    transform: rotate(-2deg);
   }
 
   .mobile-idol-sticker--zhang {
-    right: -22px;
-    bottom: -12px;
+    right: -34px;
+    bottom: -10px;
     z-index: 3;
-    width: clamp(148px, 47vw, 190px);
+    width: clamp(160px, 50vw, 202px);
+    transform: rotate(2deg);
   }
 
   .mobile-idol-sticker--bean {
-    left: -44px;
-    bottom: -44px;
+    top: -34px;
+    left: 50%;
     z-index: 5;
-    width: clamp(92px, 30vw, 122px);
-    transform: rotate(-18deg);
+    width: clamp(104px, 32vw, 132px);
+    transform: translateX(-50%) rotate(180deg);
+    filter: saturate(1.08) drop-shadow(0 -14px 24px rgba(0, 0, 0, 0.42));
   }
 
   .hero-preview-card__bar,
