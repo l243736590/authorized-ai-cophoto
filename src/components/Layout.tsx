@@ -68,13 +68,13 @@ const defaultBrandState: BrandState = {
 }
 
 function getTextLogoPath(language: 'zh' | 'ko', isDay: boolean) {
-  void isDay
-  return `/brand/${language}-text-dark.png`
+  const tone = isDay ? 'dark' : 'light'
+  return `/brand/${language}-text-${tone}.png`
 }
 
 function getFallbackTextLogoPath(language: 'zh' | 'ko', isDay: boolean) {
-  void isDay
-  return `/brand/${language}-text-dark.png`
+  const fallbackTone = isDay ? 'light' : 'dark'
+  return `/brand/${language}-text-${fallbackTone}.png`
 }
 
 function handleLogoFallback(event: SyntheticEvent<HTMLImageElement>, fallbackSrc: string) {

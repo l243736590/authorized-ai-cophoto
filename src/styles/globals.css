@@ -570,15 +570,15 @@ main {
 
 .brand-edit-item--logo {
   z-index: 1000 !important;
-  padding: 6px 10px 8px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 28px rgba(15, 31, 61, 0.1);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   line-height: 0;
 }
 
 .app-shell--day .brand-edit-item--logo {
-  background: rgba(255, 255, 255, 0.96);
+  background: transparent;
 }
 
 .brand-edit-item--tagline {
@@ -2894,7 +2894,7 @@ code,
 
   .brand-edit-item--logo {
     z-index: 1000 !important;
-    padding: 6px 10px 8px;
+    padding: 0;
   }
 
   .brand-logo {
