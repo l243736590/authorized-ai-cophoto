@@ -46,6 +46,7 @@ interface BrandDragState {
 }
 
 const brandStorageKey = 'authorized-ai-cophoto-brand-v4'
+const logoStackZIndex = 1000
 const defaultBrandState: BrandState = {
   logo: {
     x: 0,
@@ -90,7 +91,19 @@ function handleLogoFallback(event: SyntheticEvent<HTMLImageElement>, fallbackSrc
 function loadBrandState(): BrandState {
   try {
     const saved = window.localStorage.getItem(brandStorageKey)
-    return saved ? { ...defaultBrandState, ...JSON.parse(saved) } : defaultBrandState
+    const parsed = saved ? JSON.parse(saved) : {}
+
+    return {
+      logo: {
+        ...defaultBrandState.logo,
+        ...parsed.logo,
+        zIndex: logoStackZIndex,
+      },
+      tagline: {
+        ...defaultBrandState.tagline,
+        ...parsed.tagline,
+      },
+    }
   } catch {
     return defaultBrandState
   }
@@ -318,7 +331,13 @@ export function Layout({ children, compact = false }: LayoutProps) {
 
   function adjustBrandLayer(id: BrandItemId, delta: number) {
     pushUndoSnapshot()
-    setBrand((current) => ({ ...current, [id]: { ...current[id], zIndex: Math.max(1, current[id].zIndex + delta) } }))
+    setBrand((current) => ({
+      ...current,
+      [id]: {
+        ...current[id],
+        zIndex: id === 'logo' ? logoStackZIndex : Math.max(1, current[id].zIndex + delta),
+      },
+    }))
   }
 
   function adjustTaglineFont(delta: number) {
@@ -369,7 +388,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
                 left: brand.logo.x,
                 top: brand.logo.y,
                 width: brand.logo.width,
-                zIndex: brand.logo.zIndex,
+                zIndex: logoStackZIndex,
                 transform: `rotate(${brand.logo.rotation}deg)`,
               }}
               onDoubleClick={(event) => {

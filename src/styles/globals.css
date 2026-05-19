@@ -565,7 +565,7 @@ main {
 }
 
 .brand-edit-item--logo {
-  z-index: 2;
+  z-index: 1000 !important;
   line-height: 0;
 }
 
@@ -611,6 +611,8 @@ main {
 }
 
 .brand-logo {
+  position: relative;
+  z-index: 1;
   display: block;
   object-fit: contain;
   opacity: 1;
@@ -2891,7 +2893,7 @@ code,
   }
 
   .brand-edit-item--logo {
-    z-index: 2 !important;
+    z-index: 1000 !important;
   }
 
   .brand-logo {
