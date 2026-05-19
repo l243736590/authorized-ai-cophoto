@@ -282,6 +282,10 @@ main {
   contain: layout;
 }
 
+.editable-sticker-viewport-layer:not(.is-editing) {
+  display: none;
+}
+
 .editable-sticker {
   position: absolute;
   transform-origin: center center;
@@ -531,6 +535,7 @@ main {
 }
 
 .brand-stage {
+  isolation: isolate;
   position: relative;
   flex: 0 0 auto;
   width: min(390px, calc(100vw - 32px));
@@ -560,6 +565,7 @@ main {
 }
 
 .brand-edit-item--logo {
+  z-index: 2;
   line-height: 0;
 }
 
@@ -607,6 +613,7 @@ main {
 .brand-logo {
   display: block;
   object-fit: contain;
+  opacity: 1;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
 }
 
@@ -2607,6 +2614,7 @@ code,
   }
 
   .brand-stage {
+    overflow: visible;
     width: min(100%, 390px);
     height: 72px;
   }
@@ -2844,7 +2852,35 @@ code,
   }
 
   .brand-stage {
+    display: block;
     height: 62px;
+  }
+
+  .brand-stage::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    left: -8px;
+    top: -4px;
+    width: min(210px, 58vw);
+    height: 58px;
+    border-radius: 8px;
+    background: rgba(8, 11, 29, 0.28);
+    pointer-events: none;
+  }
+
+  .app-shell--day .brand-stage::before {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .brand-edit-item--logo {
+    z-index: 2 !important;
+  }
+
+  .brand-logo {
+    filter:
+      drop-shadow(0 2px 0 rgba(255, 255, 255, 0.16))
+      drop-shadow(0 10px 20px rgba(0, 0, 0, 0.22));
   }
 
   .brand-edit-item--tagline:not(.is-active) {
@@ -2977,6 +3013,7 @@ code,
     inset: 0;
     z-index: 4;
     display: block;
+    overflow: hidden;
     pointer-events: none;
   }
 
@@ -2990,26 +3027,26 @@ code,
   }
 
   .mobile-idol-sticker--son {
-    left: -42px;
-    bottom: -10px;
+    left: -24px;
+    bottom: 8px;
     z-index: 2;
-    width: clamp(152px, 47vw, 188px);
+    width: clamp(112px, 33vw, 142px);
     transform: rotate(-2deg);
   }
 
   .mobile-idol-sticker--zhang {
-    right: -34px;
-    bottom: -10px;
+    right: -22px;
+    bottom: 8px;
     z-index: 3;
-    width: clamp(160px, 50vw, 202px);
+    width: clamp(118px, 35vw, 150px);
     transform: rotate(2deg);
   }
 
   .mobile-idol-sticker--bean {
-    top: -34px;
+    top: -20px;
     left: 50%;
     z-index: 5;
-    width: clamp(104px, 32vw, 132px);
+    width: clamp(82px, 24vw, 108px);
     transform: translateX(-50%) rotate(180deg);
     filter: saturate(1.08) drop-shadow(0 -14px 24px rgba(0, 0, 0, 0.42));
   }
@@ -3168,10 +3205,6 @@ code,
   .editable-sticker.is-active,
   .brand-edit-item.is-active {
     outline-offset: 6px;
-  }
-
-  .editable-sticker-viewport-layer:not(.is-editing) {
-    display: none;
   }
 
   .editable-sticker-viewport-layer.is-editing .editable-sticker {
