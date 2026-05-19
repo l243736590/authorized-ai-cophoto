@@ -522,7 +522,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
         </div>
         <nav className="topnav" aria-label={nav.aria}>
           <a href="/">{nav.create}</a>
-          <a className="topnav__admin-login" href="/admin/login">管理员登录</a>
+          <a className="topnav__admin-login" href="/admin/login">{isKo ? '관리자 로그인' : '管理员登录'}</a>
           <a href="/admin/licensor">{nav.admin}</a>
           <a href="/verify/AICOPHOTO-2026-000001">{nav.verify}</a>
           <div className="language-switch" role="group" aria-label="Theme">
@@ -535,10 +535,10 @@ export function Layout({ children, compact = false }: LayoutProps) {
           </div>
           <div className="language-switch" role="group" aria-label="Language">
             <button className={language === 'zh' ? 'is-active' : ''} type="button" onClick={() => setLanguage('zh')}>
-              中文
+              {isKo ? '중문' : '中文'}
             </button>
             <button className={language === 'ko' ? 'is-active' : ''} type="button" onClick={() => setLanguage('ko')}>
-              한국어
+              {isKo ? '한국어' : '韩语'}
             </button>
           </div>
         </nav>

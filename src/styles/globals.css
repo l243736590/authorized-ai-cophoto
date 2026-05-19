@@ -566,7 +566,14 @@ main {
 
 .brand-edit-item--logo {
   z-index: 1000 !important;
+  padding: 6px 10px 8px;
+  border-radius: 8px;
+  background: rgba(8, 11, 29, 0.48);
   line-height: 0;
+}
+
+.app-shell--day .brand-edit-item--logo {
+  background: rgba(255, 255, 255, 0.82);
 }
 
 .brand-edit-item--tagline {
@@ -2876,24 +2883,12 @@ code,
   }
 
   .brand-stage::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    left: -8px;
-    top: -4px;
-    width: min(210px, 58vw);
-    height: 58px;
-    border-radius: 8px;
-    background: rgba(8, 11, 29, 0.28);
-    pointer-events: none;
-  }
-
-  .app-shell--day .brand-stage::before {
-    background: rgba(255, 255, 255, 0.7);
+    content: none;
   }
 
   .brand-edit-item--logo {
     z-index: 1000 !important;
+    padding: 6px 10px 8px;
   }
 
   .brand-logo {

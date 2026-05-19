@@ -143,6 +143,42 @@ export function CreatePage() {
     }[scope]
   }
 
+  function getCelebrityText(celebrity: (typeof celebrities)[number]) {
+    if (!isKo) {
+      return {
+        displayName: celebrity.displayName,
+        category: celebrity.category,
+        agencyName: celebrity.agencyName,
+      }
+    }
+
+    return (
+      {
+        'kol-esports-001': {
+          displayName: '은하 Ace',
+          category: 'e스포츠 선수',
+          agencyName: '은하 e스포츠 스튜디오',
+        },
+        'kol-study-002': {
+          displayName: 'Lina 유학기',
+          category: '유학 크리에이터',
+          agencyName: 'Lina Studio',
+        },
+        'kol-fitness-003': {
+          displayName: '번핏 Coach',
+          category: '피트니스 크리에이터',
+          agencyName: '번핏 콘텐츠 에이전시',
+        },
+      }[celebrity.id] ?? {
+        displayName: celebrity.displayName,
+        category: celebrity.category,
+        agencyName: celebrity.agencyName,
+      }
+    )
+  }
+
+  const selectedCelebrityText = getCelebrityText(selectedCelebrity)
+
   return (
     <Layout>
       <section className="hero-panel hero-panel--fan hero-panel--product">
@@ -328,7 +364,7 @@ export function CreatePage() {
             >
               {celebrities.map((celebrity) => (
                 <option key={celebrity.id} value={celebrity.id}>
-                  {celebrity.displayName} · {celebrity.category}
+                  {getCelebrityText(celebrity).displayName} · {getCelebrityText(celebrity).category}
                 </option>
               ))}
             </select>
@@ -349,8 +385,7 @@ export function CreatePage() {
                       disabled={disabled}
                       onChange={() => setUsageScope(scope)}
                     />
-                    <UsageScopeBadge scope={scope} disabled={disabled} />
-                    {isKo && <span className="usage-option__translated">{getUsageLabel(scope)}</span>}
+                    {isKo ? <span className="usage-option__translated">{getUsageLabel(scope)}</span> : <UsageScopeBadge scope={scope} disabled={disabled} />}
                     {disabled && <small>{text.commercialDisabled}</small>}
                   </label>
                 )
@@ -365,13 +400,13 @@ export function CreatePage() {
 
         <aside className="licensor-summary licensor-summary--fan">
           <div className="avatar-token">{selectedCelebrity.avatarUrl}</div>
-          <p className="eyebrow">{selectedCelebrity.category}</p>
-          <h2>{selectedCelebrity.displayName}</h2>
+          <p className="eyebrow">{selectedCelebrityText.category}</p>
+          <h2>{selectedCelebrityText.displayName}</h2>
           <p className="fan-summary-copy">{text.notMeeting}</p>
           <dl className="summary-list">
             <div>
               <dt>{text.licensor}</dt>
-              <dd>{selectedCelebrity.agencyName}</dd>
+              <dd>{selectedCelebrityText.agencyName}</dd>
             </div>
             <div>
               <dt>{text.basePrice}</dt>
@@ -382,7 +417,7 @@ export function CreatePage() {
               <dd>{getUsageLabel(usageScope)}</dd>
             </div>
           </dl>
-          <DisclaimerBox>{text.allowedUsage}</DisclaimerBox>
+          <DisclaimerBox title={isKo ? '중요 안내' : undefined}>{text.allowedUsage}</DisclaimerBox>
         </aside>
       </section>
 
@@ -393,7 +428,7 @@ export function CreatePage() {
         ))}
       </section>
 
-      <DisclaimerBox tone="strong">{text.coreDisclaimer}</DisclaimerBox>
+      <DisclaimerBox title={isKo ? '중요 안내' : undefined} tone="strong">{text.coreDisclaimer}</DisclaimerBox>
     </Layout>
   )
 }
