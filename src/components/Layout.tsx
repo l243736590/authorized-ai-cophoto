@@ -503,6 +503,7 @@ export function Layout({ children, compact = false }: LayoutProps) {
         </div>
         <nav className="topnav" aria-label={nav.aria}>
           <a href="/">{nav.create}</a>
+          <a className="topnav__admin-login" href="/admin/login">管理员登录</a>
           <a href="/admin/licensor">{nav.admin}</a>
           <a href="/verify/AICOPHOTO-2026-000001">{nav.verify}</a>
           <div className="language-switch" role="group" aria-label="Theme">
