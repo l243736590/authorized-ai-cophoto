@@ -206,7 +206,7 @@ button:disabled {
 
 .app-shell {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding-bottom: 48px;
@@ -271,7 +271,7 @@ main {
 
 .editable-sticker-viewport-layer {
   position: fixed;
-  z-index: 55;
+  z-index: 1;
   inset: 0;
   width: 100vw;
   height: 100vh;
@@ -282,8 +282,12 @@ main {
   contain: layout;
 }
 
-.editable-sticker-viewport-layer:not(.is-editing) {
-  display: none;
+.editable-sticker-viewport-layer.is-editing {
+  z-index: 55;
+}
+
+.editable-sticker-viewport-layer:not(.is-editing) .editable-sticker {
+  opacity: 0.92;
 }
 
 .editable-sticker {
@@ -3210,6 +3214,10 @@ code,
   .dom-editor-toolbar {
     max-width: calc(100vw - 24px);
     overflow-x: auto;
+  }
+
+  .editable-sticker-viewport-layer:not(.is-editing) {
+    display: none;
   }
 
   .sticker-handle {
