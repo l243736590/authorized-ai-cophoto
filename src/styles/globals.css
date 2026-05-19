@@ -568,12 +568,13 @@ main {
   z-index: 1000 !important;
   padding: 6px 10px 8px;
   border-radius: 8px;
-  background: rgba(8, 11, 29, 0.48);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 28px rgba(15, 31, 61, 0.1);
   line-height: 0;
 }
 
 .app-shell--day .brand-edit-item--logo {
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .brand-edit-item--tagline {
@@ -623,6 +624,7 @@ main {
   display: block;
   object-fit: contain;
   opacity: 1;
+  mix-blend-mode: normal;
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.18));
 }
 
