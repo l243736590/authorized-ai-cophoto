@@ -277,7 +277,7 @@ export function EditableStickerLayer() {
             style={{
               left: sticker.x,
               top: 'auto',
-              bottom: admin.editMode ? sticker.y : 0,
+              bottom: sticker.y,
               width: sticker.width,
               zIndex: sticker.zIndex + (isActive ? 10 : 0),
               transform: `rotate(${sticker.rotation}deg)`,

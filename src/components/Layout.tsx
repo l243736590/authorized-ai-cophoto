@@ -128,7 +128,6 @@ export function Layout({ children, compact = false }: LayoutProps) {
   const undoStackRef = useRef<BrandState[]>([])
   const textLogoSrc = getTextLogoPath(language, isDay)
   const activeItem = useMemo(() => (activeBrandId ? brand[activeBrandId] : null), [activeBrandId, brand])
-  const displayBrand = admin.editMode ? brand : defaultBrandState
   const nav = isKo
     ? {
         create: '제작',
@@ -375,10 +374,12 @@ export function Layout({ children, compact = false }: LayoutProps) {
         <DomElementEditor />
         <header className="topbar">
         <div className="brand-stage" aria-label={nav.logoAlt}>
-          {admin.editMode && brand.logo.deleted ? (
-            <button className="brand-restore brand-restore--logo" type="button" onClick={() => restoreBrandItem('logo')}>
-              恢复 LOGO
-            </button>
+          {brand.logo.deleted ? (
+            admin.editMode ? (
+              <button className="brand-restore brand-restore--logo" type="button" onClick={() => restoreBrandItem('logo')}>
+                恢复 LOGO
+              </button>
+            ) : null
           ) : (
             <div
               ref={(element) => {
@@ -386,11 +387,11 @@ export function Layout({ children, compact = false }: LayoutProps) {
               }}
               className={activeBrandId === 'logo' && admin.editMode ? 'brand-edit-item brand-edit-item--logo is-active' : 'brand-edit-item brand-edit-item--logo'}
               style={{
-                left: displayBrand.logo.x,
-                top: displayBrand.logo.y,
-                width: displayBrand.logo.width,
+                left: brand.logo.x,
+                top: brand.logo.y,
+                width: brand.logo.width,
                 zIndex: logoStackZIndex,
-                transform: `rotate(${displayBrand.logo.rotation}deg)`,
+                transform: `rotate(${brand.logo.rotation}deg)`,
               }}
               onDoubleClick={(event) => {
                 if (admin.editMode) {
@@ -447,10 +448,12 @@ export function Layout({ children, compact = false }: LayoutProps) {
             </div>
           )}
 
-          {admin.editMode && brand.tagline.deleted ? (
-            <button className="brand-restore brand-restore--tagline" type="button" onClick={() => restoreBrandItem('tagline')}>
-              恢复说明
-            </button>
+          {brand.tagline.deleted ? (
+            admin.editMode ? (
+              <button className="brand-restore brand-restore--tagline" type="button" onClick={() => restoreBrandItem('tagline')}>
+                恢复说明
+              </button>
+            ) : null
           ) : (
             <div
               ref={(element) => {
@@ -462,12 +465,12 @@ export function Layout({ children, compact = false }: LayoutProps) {
                   : 'brand-edit-item brand-edit-item--tagline'
               }
               style={{
-                left: displayBrand.tagline.x,
-                top: displayBrand.tagline.y,
-                width: displayBrand.tagline.width,
-                zIndex: displayBrand.tagline.zIndex,
-                fontSize: displayBrand.tagline.fontSize,
-                transform: `rotate(${displayBrand.tagline.rotation}deg)`,
+                left: brand.tagline.x,
+                top: brand.tagline.y,
+                width: brand.tagline.width,
+                zIndex: brand.tagline.zIndex,
+                fontSize: brand.tagline.fontSize,
+                transform: `rotate(${brand.tagline.rotation}deg)`,
               }}
               onDoubleClick={(event) => {
                 if (admin.editMode) {

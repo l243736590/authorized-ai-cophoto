@@ -271,7 +271,7 @@ main {
 
 .editable-sticker-viewport-layer {
   position: fixed;
-  z-index: 1;
+  z-index: 55;
   inset: 0;
   width: 100vw;
   height: 100vh;
@@ -280,10 +280,6 @@ main {
   pointer-events: none;
   transform: none;
   contain: layout;
-}
-
-.editable-sticker-viewport-layer.is-editing {
-  z-index: 55;
 }
 
 .editable-sticker-viewport-layer:not(.is-editing) .editable-sticker {
