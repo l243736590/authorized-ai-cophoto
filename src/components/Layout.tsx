@@ -46,6 +46,7 @@ interface BrandDragState {
 }
 
 const brandStorageKey = 'authorized-ai-cophoto-brand-v4'
+const brandAssetVersion = '20260520-logo-refresh'
 const logoStackZIndex = 1000
 const defaultBrandState: BrandState = {
   logo: {
@@ -69,12 +70,12 @@ const defaultBrandState: BrandState = {
 
 function getTextLogoPath(language: 'zh' | 'ko', isDay: boolean) {
   const tone = isDay ? 'dark' : 'light'
-  return `/brand/${language}-text-${tone}.png`
+  return `/brand/${language}-text-${tone}.png?v=${brandAssetVersion}`
 }
 
 function getFallbackTextLogoPath(language: 'zh' | 'ko', isDay: boolean) {
   const fallbackTone = isDay ? 'light' : 'dark'
-  return `/brand/${language}-text-${fallbackTone}.png`
+  return `/brand/${language}-text-${fallbackTone}.png?v=${brandAssetVersion}`
 }
 
 function handleLogoFallback(event: SyntheticEvent<HTMLImageElement>, fallbackSrc: string) {
