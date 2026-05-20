@@ -539,10 +539,10 @@ export function Layout({ children, compact = false }: LayoutProps) {
           </div>
           <div className="language-switch" role="group" aria-label="Language">
             <button className={language === 'zh' ? 'is-active' : ''} type="button" onClick={() => setLanguage('zh')}>
-              {isKo ? '중문' : '中文'}
+              中文
             </button>
             <button className={language === 'ko' ? 'is-active' : ''} type="button" onClick={() => setLanguage('ko')}>
-              {isKo ? '한국어' : '韩语'}
+              한국어
             </button>
           </div>
         </nav>
