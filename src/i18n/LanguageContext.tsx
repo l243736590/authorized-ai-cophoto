@@ -53,7 +53,7 @@ function getInitialLanguage(): Language {
 }
 
 function getInitialTheme(): ThemeMode {
-  return window.localStorage.getItem(themeStorageKey) === 'day' ? 'day' : 'night'
+  return window.localStorage.getItem(themeStorageKey) === 'night' ? 'night' : 'day'
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

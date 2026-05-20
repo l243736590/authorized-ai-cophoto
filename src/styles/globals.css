@@ -20,12 +20,12 @@
   --global-gradient:
     linear-gradient(
       105deg,
-      #07091a 0%,
-      #111832 24%,
-      #17264c 43%,
-      #322557 64%,
-      #6b2b63 82%,
-      #251833 100%
+      #15224a 0%,
+      #243464 25%,
+      #33447a 46%,
+      #62427a 68%,
+      #9a5a88 86%,
+      #3f315d 100%
     );
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -72,8 +72,8 @@ body {
   position: relative;
   overflow-x: hidden;
   background:
-    repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 46px),
-    linear-gradient(112deg, #07091a 0%, #111832 18%, #1c336b 38%, #4b2d67 58%, #8d3475 78%, #17142c 100%);
+    repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 46px),
+    linear-gradient(112deg, #15224a 0%, #263865 18%, #3f4d86 38%, #735083 58%, #b46d9b 78%, #51416d 100%);
   background-size:
     100% 100%,
     420% 420%;
@@ -87,10 +87,10 @@ body::before {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(circle at 18% 20%, rgba(53, 126, 255, 0.26), transparent 34%),
-    radial-gradient(circle at 82% 16%, rgba(255, 73, 164, 0.24), transparent 30%),
-    radial-gradient(circle at 58% 84%, rgba(201, 154, 68, 0.18), transparent 34%),
-    linear-gradient(180deg, rgba(8, 11, 29, 0.02), rgba(8, 11, 29, 0.28));
+    radial-gradient(circle at 18% 20%, rgba(123, 174, 255, 0.34), transparent 34%),
+    radial-gradient(circle at 82% 16%, rgba(255, 125, 194, 0.3), transparent 30%),
+    radial-gradient(circle at 58% 84%, rgba(255, 215, 132, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(20, 31, 70, 0.02), rgba(20, 31, 70, 0.2));
   background-size: 180% 180%, 170% 170%, 190% 190%, 100% 100%;
   background-position: 12% 20%, 82% 16%, 58% 84%, center;
   opacity: 0.82;
@@ -106,11 +106,11 @@ body::after {
   z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, rgba(7, 9, 26, 0.1), rgba(7, 9, 26, 0.8) 18%, rgba(7, 9, 26, 0.8) 82%, rgba(7, 9, 26, 0.1));
+    linear-gradient(90deg, rgba(20, 31, 70, 0.04), rgba(20, 31, 70, 0.36) 18%, rgba(20, 31, 70, 0.34) 82%, rgba(20, 31, 70, 0.04));
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;
-  opacity: 0.64;
+  opacity: 0.32;
   mix-blend-mode: screen;
   animation: background-veil-drift 18s ease-in-out infinite alternate;
 }
@@ -271,7 +271,7 @@ main {
 
 .editable-sticker-viewport-layer {
   position: fixed;
-  z-index: 55;
+  z-index: 1;
   inset: 0;
   width: 100vw;
   height: 100vh;
@@ -280,6 +280,10 @@ main {
   pointer-events: none;
   transform: none;
   contain: layout;
+}
+
+.editable-sticker-viewport-layer.is-editing {
+  z-index: 75;
 }
 
 .editable-sticker-viewport-layer:not(.is-editing) .editable-sticker {
@@ -1128,9 +1132,9 @@ h2 {
   padding: clamp(38px, 5vw, 72px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   background:
-    radial-gradient(circle at 78% 16%, rgba(255, 79, 139, 0.25), transparent 28%),
-    radial-gradient(circle at 18% 82%, rgba(59, 185, 201, 0.16), transparent 32%),
-    linear-gradient(120deg, rgba(8, 11, 29, 0.94), rgba(17, 24, 50, 0.82) 56%, rgba(72, 32, 78, 0.72));
+    radial-gradient(circle at 78% 16%, rgba(255, 110, 180, 0.36), transparent 30%),
+    radial-gradient(circle at 18% 82%, rgba(116, 207, 222, 0.24), transparent 34%),
+    linear-gradient(120deg, rgba(30, 45, 92, 0.9), rgba(43, 58, 108, 0.78) 56%, rgba(111, 71, 118, 0.72));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
@@ -1305,9 +1309,9 @@ h2 {
 
 .app-shell--ko .hero-panel--product {
   background:
-    radial-gradient(circle at 78% 16%, rgba(201, 154, 68, 0.22), transparent 28%),
-    radial-gradient(circle at 18% 82%, rgba(255, 255, 255, 0.1), transparent 34%),
-    linear-gradient(120deg, rgba(5, 10, 24, 0.96), rgba(15, 31, 61, 0.9) 58%, rgba(47, 39, 67, 0.76));
+    radial-gradient(circle at 78% 16%, rgba(220, 178, 88, 0.3), transparent 28%),
+    radial-gradient(circle at 18% 82%, rgba(255, 255, 255, 0.14), transparent 34%),
+    linear-gradient(120deg, rgba(27, 45, 89, 0.9), rgba(38, 64, 114, 0.82) 58%, rgba(86, 71, 111, 0.72));
 }
 
 .app-shell--ko .hero-panel--product h1 {
@@ -3210,10 +3214,6 @@ code,
   .dom-editor-toolbar {
     max-width: calc(100vw - 24px);
     overflow-x: auto;
-  }
-
-  .editable-sticker-viewport-layer:not(.is-editing) {
-    display: none;
   }
 
   .sticker-handle {
