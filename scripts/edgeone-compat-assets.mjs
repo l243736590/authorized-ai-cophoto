@@ -9,19 +9,23 @@ const legacyJsAssets = [
   'index-By1Uiu1M.js',
   'index-CsA2p_VK.js',
   'index-CTKYF3dL.js',
+  'index-CENZ5zyK.js',
   'index-D_jZtO7Y.js',
+  'index-DBHAHrMC.js',
   'index-DbQ6-nSj.js',
   'index-DhrBJgDH.js',
   'index-dFu32v3X.js',
   'index-DMwD37sb.js',
   'index-DQJBkGsS.js',
   'index-Dt5BAbO1.js',
+  'index-DvTrzD4q.js',
   'index-EhtNlvcD.js',
 ]
 
 const legacyCssAssets = [
   'index-B0xYHsO2.css',
   'index-B39r7jXP.css',
+  'index-BMrMzo00.css',
   'index-BPxFBi5w.css',
   'index-ClSJjIPy.css',
   'index-cpOy6jb8.css',

@@ -2587,6 +2587,66 @@ code,
   }
 }
 
+@media (min-width: 901px) and (max-width: 1100px) {
+  .app-shell,
+  .app-shell--compact {
+    width: min(100% - 24px, 980px);
+  }
+
+  .topbar {
+    gap: 16px;
+  }
+
+  .brand-stage {
+    width: 210px;
+    height: 74px;
+  }
+
+  .topnav {
+    gap: 10px;
+  }
+
+  .topnav a {
+    font-size: 14px;
+  }
+
+  .hero-panel--product {
+    min-height: auto;
+    grid-template-columns: minmax(0, 0.84fr) minmax(390px, 1.16fr);
+    gap: 34px;
+    align-items: center;
+    padding: 44px 48px;
+  }
+
+  .hero-panel--product .hero-panel__copy {
+    max-width: 430px;
+  }
+
+  .hero-panel--product h1 {
+    max-width: 10ch;
+    font-size: clamp(44px, 5.5vw, 58px);
+  }
+
+  .hero-panel--product .hero-subtitle {
+    font-size: clamp(22px, 2.6vw, 26px);
+  }
+
+  .hero-panel--product .hero-description {
+    font-size: 16px;
+    line-height: 1.68;
+  }
+
+  .hero-preview-card__bar {
+    min-height: 46px;
+    padding: 12px 14px;
+  }
+
+  .hero-cert-panel {
+    width: min(360px, 74%);
+    margin-top: -24px;
+  }
+}
+
 @media (max-width: 900px) {
   body {
     background-attachment: scroll;
