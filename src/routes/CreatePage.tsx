@@ -182,6 +182,12 @@ export function CreatePage() {
   return (
     <Layout>
       <section className="hero-panel hero-panel--fan hero-panel--product">
+        <div className="mobile-idol-stickers" aria-hidden="true">
+          <img className="mobile-idol-sticker mobile-idol-sticker--son" src="/references/son-heungmin-cutout.png" alt="" />
+          <img className="mobile-idol-sticker mobile-idol-sticker--zhang" src="/references/zhang-wonyoung-cutout.png" alt="" />
+          <img className="mobile-idol-sticker mobile-idol-sticker--bean" src="/references/mr-bean.png" alt="" />
+        </div>
+
         <div className="hero-panel__copy">
           <p className="eyebrow">{text.heroEyebrow}</p>
           <h1>{text.heroTitle}</h1>
@@ -223,11 +229,6 @@ export function CreatePage() {
                   <span>{text.missingFootball}</span>
                 </div>
               )}
-              <div className="mobile-idol-stickers" aria-hidden="true">
-                <img className="mobile-idol-sticker mobile-idol-sticker--son" src="/references/son-heungmin-cutout.png" alt="" />
-                <img className="mobile-idol-sticker mobile-idol-sticker--zhang" src="/references/zhang-wonyoung-cutout.png" alt="" />
-                <img className="mobile-idol-sticker mobile-idol-sticker--bean" src="/references/mr-bean.png" alt="" />
-              </div>
             </div>
           </div>
 
